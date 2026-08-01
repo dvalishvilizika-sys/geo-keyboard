@@ -126,6 +126,49 @@ header h1 {
   word-break: break-word;
 }
 
+.free-typing {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+#freeTypingArea {
+  width: 100%;
+  height: 150px;
+  padding: 15px;
+  border-radius: 15px;
+  border: 2px solid #1982C4;
+  font-size: 20px;
+  font-family: 'Inter', sans-serif;
+  resize: none;
+  box-sizing: border-box;
+}
+
+#freeTypingArea:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(25, 130, 196, 0.3);
+}
+
+#downloadBtn {
+  align-self: center;
+  background: #8AC926;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.1s;
+}
+
+#downloadBtn:hover {
+  transform: translateY(-2px);
+}
+
 .char {
   color: #999;
   border-bottom: 3px solid transparent;
@@ -402,8 +445,8 @@ body[data-lang="en"] .key .shift-char {
 
 /* Giga Styles */
 .giga-container {
-  width: 100px;
-  height: 120px;
+  width: 200px;
+  height: 240px;
   position: relative;
   display: flex;
   justify-content: center;
@@ -411,24 +454,15 @@ body[data-lang="en"] .key .shift-char {
   flex-shrink: 0;
 }
 
-.giga-svg {
-  width: 100px;
-  height: 120px;
-  overflow: visible;
+.giga-image {
+  width: 200px;
+  height: auto;
+  max-height: 240px;
+  object-fit: contain;
   transition: transform 0.2s;
 }
 
-.blade {
-  transform-origin: 50px 10px;
-  animation: spinPropeller 0.15s linear infinite alternate;
-}
-
-@keyframes spinPropeller {
-  0% { transform: scaleX(1); }
-  100% { transform: scaleX(-0.5); }
-}
-
-.giga-container.dance .giga-svg {
+.giga-container.dance .giga-image {
   animation: gigaDance 0.3s ease-in-out;
 }
 
@@ -437,14 +471,14 @@ body[data-lang="en"] .key .shift-char {
   50% { transform: translateY(-15px) scale(1.1); }
 }
 
-.giga-container.shake-head .giga-head {
+.giga-container.shake-head .giga-image {
   animation: gigaShake 0.3s ease-in-out;
 }
 
 @keyframes gigaShake {
   0%, 100% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(-5px) rotate(-5deg); }
-  75% { transform: translateX(5px) rotate(5deg); }
+  25% { transform: translateX(-5px) rotate(-10deg); }
+  75% { transform: translateX(5px) rotate(10deg); }
 }
 
 .giga-star {
@@ -470,4 +504,23 @@ body[data-lang="en"] .key .shift-char {
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+/* Level 4 Specific */
+body.level-4 .stats {
+  justify-content: center;
+}
+
+body.level-4 .stat-box {
+  display: none;
+}
+
+body.level-4 .giga-container {
+  width: 300px;
+  height: 360px;
+}
+
+body.level-4 .giga-image {
+  width: 300px;
+  max-height: 360px;
 }

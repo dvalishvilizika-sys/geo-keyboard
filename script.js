@@ -325,6 +325,23 @@ function startLevel() {
   document.body.setAttribute('data-lang', currentLang);
   
   currentLevel = parseInt(document.getElementById('levelSelect').value);
+  
+  if (currentLevel === 3) {
+    document.body.classList.add('level-4');
+    document.getElementById('textDisplay').style.display = 'none';
+    document.getElementById('freeTypingContainer').style.display = 'flex';
+    document.getElementById('freeTypingArea').value = '';
+    document.querySelectorAll('.key.highlight, .finger.active').forEach(el => {
+      el.classList.remove('highlight', 'active');
+    });
+    document.getElementById('freeTypingArea').focus();
+    return;
+  } else {
+    document.body.classList.remove('level-4');
+    document.getElementById('textDisplay').style.display = 'block';
+    document.getElementById('freeTypingContainer').style.display = 'none';
+  }
+
   targetText = generateText(currentLang, currentLevel);
   
   updateStats();
@@ -359,6 +376,13 @@ document.addEventListener('keydown', (e) => {
   if (['Shift', 'CapsLock', 'Control', 'Alt', 'Meta'].includes(e.key)) {
     const el = document.getElementById(e.code);
     if(el) el.classList.add('active');
+    return;
+  }
+  
+  if (currentLevel === 3) {
+    const el = document.getElementById(e.code);
+    if(el) el.classList.add('active');
+    triggerGigaCorrect();
     return;
   }
   
@@ -433,6 +457,19 @@ document.getElementById('theoryBtn').addEventListener('click', () => {
 });
 document.getElementById('closeTheoryBtn').addEventListener('click', () => {
   document.getElementById('theoryModal').classList.remove('show');
+});
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const text = document.getElementById('freeTypingArea').value;
+  if (!text) {
+    alert("გთხოვთ აკრიფოთ ტექსტი შენახვამდე.");
+    return;
+  }
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'chemi_proeqti.txt';
+  a.click();
 });
 
 renderKeyboard();

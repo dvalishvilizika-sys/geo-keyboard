@@ -286,6 +286,34 @@ function showModal() {
   document.getElementById('resultModal').classList.add('show');
 }
 
+function triggerGigaCorrect() {
+  const giga = document.getElementById('gigaContainer');
+  if (!giga) return;
+  giga.classList.remove('dance', 'shake-head');
+  void giga.offsetWidth; // trigger reflow
+  giga.classList.add('dance');
+  
+  // Star particle
+  const star = document.createElement('div');
+  star.className = 'giga-star';
+  star.innerText = '⭐';
+  const tx = (Math.random() - 0.5) * 150;
+  const ty = -50 - Math.random() * 50;
+  star.style.setProperty('--tx', `${tx}px`);
+  star.style.setProperty('--ty', `${ty}px`);
+  
+  document.getElementById('starsContainer').appendChild(star);
+  setTimeout(() => star.remove(), 600);
+}
+
+function triggerGigaWrong() {
+  const giga = document.getElementById('gigaContainer');
+  if (!giga) return;
+  giga.classList.remove('dance', 'shake-head');
+  void giga.offsetWidth;
+  giga.classList.add('shake-head');
+}
+
 function startLevel() {
   clearInterval(timerInterval);
   startTime = null;
@@ -351,6 +379,7 @@ document.addEventListener('keydown', (e) => {
   
   if (typedChar === expectedChar) {
     playSound('correct');
+    triggerGigaCorrect();
     
     const span = document.getElementById(`char-${currentIndex}`);
     span.classList.remove('current', 'wrong');
@@ -370,6 +399,7 @@ document.addEventListener('keydown', (e) => {
   } else {
     if (typedChar.length === 1) {
       playSound('wrong');
+      triggerGigaWrong();
       errors++;
       totalTyped++;
       

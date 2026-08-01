@@ -9,7 +9,10 @@
 <body data-lang="ka">
   <div class="container">
     <header>
-      <h1>⌨️ კლავიატურის ოსტატი</h1>
+      <div class="logo-title">
+        <img src="key_abg.png" alt="Logo" class="app-logo">
+        <h1>კლავიატურის ოსტატი</h1>
+      </div>
       <div class="controls">
         <select id="langSelect">
           <option value="ka">🇬🇪 ქართული</option>
@@ -27,6 +30,47 @@
     
     <div class="stats">
       <div class="stat-box">სიზუსტე / Acc:<br><span class="stat-val"><span id="accuracy">100</span>%</span></div>
+      
+      <!-- Giga The Robot Ant -->
+      <div class="giga-container" id="gigaContainer">
+        <svg class="giga-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Propeller Base -->
+          <rect x="48" y="10" width="4" height="20" fill="#666" />
+          <!-- Propeller Blades (animated) -->
+          <path d="M 15,10 C 35,0 65,0 85,10 C 65,20 35,20 15,10 Z" fill="#FFCA3A" class="blade" />
+          <!-- Body -->
+          <ellipse cx="50" cy="80" rx="22" ry="25" fill="#1982C4" />
+          <ellipse cx="50" cy="55" rx="16" ry="18" fill="#1982C4" />
+          <!-- Legs -->
+          <path d="M 38,95 L 28,112" stroke="#333" stroke-width="4" stroke-linecap="round" />
+          <path d="M 62,95 L 72,112" stroke="#333" stroke-width="4" stroke-linecap="round" />
+          <path d="M 32,70 L 15,80" stroke="#333" stroke-width="4" stroke-linecap="round" />
+          <path d="M 68,70 L 85,80" stroke="#333" stroke-width="4" stroke-linecap="round" />
+          <!-- Gloves -->
+          <circle cx="15" cy="80" r="8" fill="#FF595E" />
+          <circle cx="85" cy="80" r="8" fill="#8AC926" />
+          
+          <!-- Head Group (can shake) -->
+          <g class="giga-head">
+            <circle cx="50" cy="30" r="20" fill="#1982C4" />
+            <!-- Antennae -->
+            <path d="M 40,15 Q 35,5 25,10" stroke="#333" stroke-width="3" fill="none" />
+            <path d="M 60,15 Q 65,5 75,10" stroke="#333" stroke-width="3" fill="none" />
+            <circle cx="25" cy="10" r="4" fill="#FFCA3A" />
+            <circle cx="75" cy="10" r="4" fill="#FFCA3A" />
+            <!-- Glasses -->
+            <rect x="28" y="20" width="18" height="12" rx="3" fill="white" stroke="#333" stroke-width="2" />
+            <rect x="54" y="20" width="18" height="12" rx="3" fill="white" stroke="#333" stroke-width="2" />
+            <line x1="46" y1="26" x2="54" y2="26" stroke="#333" stroke-width="2" />
+            <circle cx="37" cy="26" r="3" fill="#333" />
+            <circle cx="63" cy="26" r="3" fill="#333" />
+            <!-- Smile -->
+            <path d="M 42,40 Q 50,45 58,40" stroke="#333" stroke-width="2" fill="none" />
+          </g>
+        </svg>
+        <div class="stars-container" id="starsContainer"></div>
+      </div>
+
       <div class="stat-box">სიჩქარე / WPM:<br><span class="stat-val"><span id="wpm">0</span></span></div>
       <div class="stat-box">ქულა / Score:<br><span class="stat-val"><span id="score">0</span></span></div>
     </div>

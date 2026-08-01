@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>კლავიატურის ოსტატი - Keyboard Master</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-lang="ka">
+  <div class="container">
+    <header>
+      <h1>⌨️ კლავიატურის ოსტატი</h1>
+      <div class="controls">
+        <select id="langSelect">
+          <option value="ka">🇬🇪 ქართული</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+        <select id="levelSelect">
+          <option value="0">ეტაპი 1: ასოები</option>
+          <option value="1">ეტაპი 2: სიტყვები</option>
+          <option value="2">ეტაპი 3: ტექსტები</option>
+        </select>
+        <button id="theoryBtn">📖 თეორია და ინსტრუქცია</button>
+        <button id="restartBtn">თავიდან დაწყება</button>
+      </div>
+    </header>
+    
+    <div class="stats">
+      <div class="stat-box">სიზუსტე / Acc:<br><span class="stat-val"><span id="accuracy">100</span>%</span></div>
+      <div class="stat-box">სიჩქარე / WPM:<br><span class="stat-val"><span id="wpm">0</span></span></div>
+      <div class="stat-box">ქულა / Score:<br><span class="stat-val"><span id="score">0</span></span></div>
+    </div>
+    
+    <div class="text-display" id="textDisplay"></div>
+    
+    <div class="keyboard" id="keyboard"></div>
+    
+    <div class="hands-container">
+      <!-- Left Hand -->
+      <svg class="hand left-hand" viewBox="0 0 120 150">
+        <rect id="finger-lp" class="finger lp" x="15" y="45" width="16" height="45" rx="8" />
+        <rect id="finger-lr" class="finger lr" x="35" y="25" width="16" height="65" rx="8" />
+        <rect id="finger-lm" class="finger lm" x="55" y="15" width="16" height="75" rx="8" />
+        <rect id="finger-li" class="finger li" x="75" y="25" width="16" height="65" rx="8" />
+        <rect id="finger-l-thumb" class="finger thumb" x="85" y="70" width="16" height="45" rx="8" transform="rotate(-35 93 70)" />
+        <path class="palm" d="M15,80 L85,80 L95,120 Q90,140 55,140 Q15,140 15,80 Z" />
+      </svg>
+      
+      <!-- Right Hand -->
+      <svg class="hand right-hand" viewBox="0 0 120 150">
+        <rect id="finger-r-thumb" class="finger thumb" x="19" y="70" width="16" height="45" rx="8" transform="rotate(35 27 70)" />
+        <rect id="finger-ri" class="finger ri" x="29" y="25" width="16" height="65" rx="8" />
+        <rect id="finger-rm" class="finger rm" x="49" y="15" width="16" height="75" rx="8" />
+        <rect id="finger-rr" class="finger rr" x="69" y="25" width="16" height="65" rx="8" />
+        <rect id="finger-rp" class="finger rp" x="89" y="45" width="16" height="45" rx="8" />
+        <path class="palm" d="M105,80 L35,80 L25,120 Q30,140 65,140 Q105,140 105,80 Z" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="theoryModal">
+    <div class="modal theory-modal">
+      <button class="close-btn" id="closeTheoryBtn">✖</button>
+      <h2>📖 თეორია და ინსტრუქცია</h2>
+      
+      <div class="theory-content">
+        <h3>1. 10 თითით ბეჭდვის წესები</h3>
+        <p>თითების საწყისი პოზიციაა შუა რიგი. მარცხენა ხელის თითები დააწყვეთ <strong>A S D F (ა ს დ ფ)</strong> ღილაკებზე, ხოლო მარჯვენა ხელის თითები — <strong>J K L ; (ჯ კ ლ ;)</strong> ღილაკებზე. ცერა თითები ყოველთვის <strong>Space (ჰარი)</strong> ღილაკზეა.</p>
+
+        <h3>2. როგორ ვბეჭდოთ სპეციფიკური ქართული ასოები (Shift-ით)</h3>
+        <p>ასოების: <strong>ჭ, ღ, შ, ჟ, ძ, ჩ, თ</strong> დასაწერად, გამოიყენება მარცხენა ან მარჯვენა <strong>Shift</strong> ღილაკი. ყოველთვის გამოიყენეთ საპირისპირო ხელის Shift. (მაგალითად: მარჯვენა ხელით ასო "ჟ"-ს აკრეფისას, მარცხენა ნეკა თითით დააჭირეთ Shift-ს).</p>
+
+        <h3>3. კომპიუტერზე ენის შეცვლა</h3>
+        <p>კლავიატურის ენის შესაცვლელად დააჭირეთ ერთ-ერთ შემდეგ კომბინაციას: <br> <strong>Shift + Alt</strong> ან <strong>Win + Space (ჰარი)</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="resultModal">
+    <div class="modal">
+      <h2 id="modalTitle">გილოცავთ! Level Complete!</h2>
+      <div class="stars" id="modalStars">⭐⭐⭐</div>
+      <p>სიჩქარე / Speed: <strong><span id="modalWpm"></span> WPM</strong></p>
+      <p>სიზუსტე / Accuracy: <strong><span id="modalAccuracy"></span>%</strong></p>
+      <button id="nextLevelBtn">შემდეგი ეტაპი / Next Level</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

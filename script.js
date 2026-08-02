@@ -148,6 +148,41 @@ function generateText(lang, levelIndex) {
   }
 }
 
+let virtualShift = false;
+
+function handleVirtualKeyClick(e) {
+  const keyEl = e.target.closest('.key');
+  if (!keyEl) return;
+  
+  const code = keyEl.id;
+  
+  if (code === 'ShiftLeft' || code === 'ShiftRight') {
+    virtualShift = !virtualShift;
+    document.getElementById('ShiftLeft').classList.toggle('active', virtualShift);
+    document.getElementById('ShiftRight').classList.toggle('active', virtualShift);
+    return;
+  }
+  
+  keyEl.classList.add('active');
+  setTimeout(() => { keyEl.classList.remove('active'); }, 150);
+  
+  const event = new KeyboardEvent('keydown', {
+    code: code,
+    key: '',
+    shiftKey: virtualShift,
+    bubbles: true
+  });
+  document.dispatchEvent(event);
+  
+  if (virtualShift) {
+    virtualShift = false;
+    const sl = document.getElementById('ShiftLeft');
+    const sr = document.getElementById('ShiftRight');
+    if(sl) sl.classList.remove('active');
+    if(sr) sr.classList.remove('active');
+  }
+}
+
 function renderKeyboard() {
   const kb = document.getElementById('keyboard');
   kb.innerHTML = '';
@@ -174,6 +209,9 @@ function renderKeyboard() {
     });
     kb.appendChild(rowEl);
   });
+  
+  kb.addEventListener('mousedown', (e) => { e.preventDefault(); handleVirtualKeyClick(e); });
+  kb.addEventListener('touchstart', (e) => { e.preventDefault(); handleVirtualKeyClick(e); }, {passive: false});
 }
 
 function highlightNextKey() {
@@ -383,6 +421,22 @@ document.addEventListener('keydown', (e) => {
     const el = document.getElementById(e.code);
     if(el) el.classList.add('active');
     triggerGigaCorrect();
+    
+    if (!e.isTrusted) {
+      const ta = document.getElementById('freeTypingArea');
+      if (e.code === 'Backspace') {
+        ta.value = ta.value.slice(0, -1);
+      } else if (e.code === 'Space') {
+        ta.value += ' ';
+      } else if (e.code === 'Enter') {
+        ta.value += '\n';
+      } else if (e.code === 'Tab') {
+        ta.value += '\t';
+      } else {
+        const char = getTypedChar(e, currentLang);
+        if (char) ta.value += char;
+      }
+    }
     return;
   }
   

@@ -63,23 +63,49 @@ const keyboardLayout = [
 const levels = {
   ka: [
     { name: 'ეტაპი 1: ასოები', data: ['ა', 'ბ', 'გ', 'დ', 'ე', 'ვ', 'ზ', 'თ', 'ი', 'კ', 'ლ', 'მ', 'ნ', 'ო', 'პ', 'ჟ', 'რ', 'ს', 'ტ', 'უ', 'ფ', 'ქ', 'ღ', 'ყ', 'შ', 'ჩ', 'ც', 'ძ', 'წ', 'ჭ', 'ხ', 'ჯ', 'ჰ'] },
-    { name: 'ეტაპი 2: სიტყვები', data: ['სკოლა', 'წიგნი', 'ბურთი', 'მასწავლებელი', 'მზე', 'მთვარე', 'ცოდნა', 'კომპიუტერი', 'კლავიატურა', 'საქართველო', 'თბილისი', 'მეგობარი', 'მოსწავლე', 'გაკვეთილი', 'მუსიკა', 'ისტორია'] },
+    { name: 'ეტაპი 2: სიტყვები', categories: {
+        mixed: ['სკოლა', 'წიგნი', 'ბურთი', 'მასწავლებელი', 'მზე', 'მთვარე', 'ცოდნა', 'კომპიუტერი', 'კლავიატურა', 'საქართველო', 'თბილისი', 'მეგობარი', 'მოსწავლე', 'გაკვეთილი', 'მუსიკა', 'ისტორია'],
+        animals: ['ძაღლი', 'კატა', 'დათვი', 'მგელი', 'მელა', 'კურდღელი', 'ლომი', 'ვეფხვი', 'სპილო', 'ჟირაფი', 'მაიმუნი', 'ცხენი', 'ძროხა'],
+        colors: ['წითელი', 'ლურჯი', 'მწვანე', 'ყვითელი', 'შავი', 'თეთრი', 'ნარინჯისფერი', 'იისფერი', 'ვარდისფერი', 'ყავისფერი', 'რუხი'],
+        school: ['სკოლა', 'წიგნი', 'რვეული', 'კალამი', 'ფანქარი', 'ჩანთა', 'დაფა', 'მასწავლებელი', 'მოსწავლე', 'მერხი', 'საშლელი', 'სახაზავი']
+      } 
+    },
     { name: 'ეტაპი 3: ტექსტები', data: [
       'მე ვსწავლობ ბეჭდვას ათი თითით. ეს ძალიან სახალისოა!',
       'კლავიატურაზე მუშაობა ძალიან საინტერესოა, თუ სწორად იყენებ თითებს.',
       'სწრაფი ბეჭდვა დროის დაზოგვის საუკეთესო საშუალებაა თანამედროვე სამყაროში.',
-      'ინტერნეტი და ტექნოლოგიები გვეხმარება ახალი ცოდნის მიღებაში.'
-    ] }
+      'ინტერნეტი და ტექნოლოგიები გვეხმარება ახალი ცოდნის მიღებაში.',
+      'რობოტი გიგა ჩემი საუკეთესო მეგობარია და ის ყოველთვის მეხმარება.',
+      'სკოლაში ბევრი ახალი და საინტერესო საგანი ვისწავლე დღეს.',
+      'მზე ანათებს, ჩიტები გალობენ და ეზოში ბავშვები თამაშობენ.',
+      'წიგნების კითხვა ავითარებს ფანტაზიას და აფართოებს თვალსაწიერს.',
+      'ჯანსაღი კვება და ვარჯიში აუცილებელია ძლიერი ორგანიზმისთვის.',
+      'ჩემი ოცნებაა გავხდე პროგრამისტი და შევქმნა მაგარი თამაშები.'
+    ] },
+    { name: 'ეტაპი 7: ციფრები და სიმბოლოები', data: ['123!', '?.,', '(10)', '45-67', '@email', '100%', 'A+B=C', '"hello"', '5*5=25', '#tag'] }
   ],
   en: [
     { name: 'Stage 1: Letters', data: ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'] },
-    { name: 'Stage 2: Words', data: ['school', 'book', 'ball', 'teacher', 'sun', 'moon', 'knowledge', 'computer', 'keyboard', 'friend', 'student', 'lesson', 'music', 'history', 'georgia', 'tbilisi'] },
+    { name: 'Stage 2: Words', categories: {
+        mixed: ['school', 'book', 'ball', 'teacher', 'sun', 'moon', 'knowledge', 'computer', 'keyboard', 'friend', 'student', 'lesson', 'music', 'history', 'georgia', 'tbilisi'],
+        animals: ['dog', 'cat', 'bear', 'wolf', 'fox', 'rabbit', 'lion', 'tiger', 'elephant', 'giraffe', 'monkey', 'horse', 'cow'],
+        colors: ['red', 'blue', 'green', 'yellow', 'black', 'white', 'orange', 'purple', 'pink', 'brown', 'grey'],
+        school: ['school', 'book', 'notebook', 'pen', 'pencil', 'bag', 'board', 'teacher', 'student', 'desk', 'eraser', 'ruler']
+      } 
+    },
     { name: 'Stage 3: Texts', data: [
       'I am learning to type with ten fingers. It is very fun!',
       'Working on the keyboard is very interesting if you use your fingers correctly.',
       'Fast typing is the best way to save time in the modern world.',
-      'The internet and technologies help us gain new knowledge.'
-    ] }
+      'The internet and technologies help us gain new knowledge.',
+      'Giga the robot is my best friend and always helps me learn.',
+      'I learned many new and interesting subjects at school today.',
+      'The sun is shining, birds are singing, and children are playing.',
+      'Reading books develops imagination and broadens the mind.',
+      'Healthy food and exercise are essential for a strong body.',
+      'My dream is to become a programmer and create awesome games.'
+    ] },
+    { name: 'Stage 7: Numbers & Symbols', data: ['123!', '?.,', '(10)', '45-67', '@email', '100%', 'A+B=C', '"hello"', '5*5=25', '#tag'] }
   ]
 };
 
@@ -92,6 +118,9 @@ let totalTyped = 0;
 let startTime = null;
 let timerInterval = null;
 let audioCtx = null;
+let timeLeftValue = 60;
+let isTimeUp = false;
+let dictationWordsCount = 0;
 
 // Audio generation
 function playSound(type) {
@@ -126,7 +155,10 @@ function playSound(type) {
 }
 
 function generateText(lang, levelIndex) {
-  const level = levels[lang][levelIndex];
+  let arrayIndex = levelIndex;
+  if (levelIndex === 6) arrayIndex = 3;
+  const level = levels[lang][arrayIndex];
+  
   if (levelIndex === 0) { // Letters
     let res = [];
     for(let i=0; i<6; i++) {
@@ -138,8 +170,21 @@ function generateText(lang, levelIndex) {
     }
     return res.join(' ');
   } else if (levelIndex === 1) { // Words
+    const cat = document.getElementById('categorySelect').value;
+    const wordList = level.categories[cat] || level.categories.mixed;
+    
+    if (currentLevel === 5) {
+      return wordList[Math.floor(Math.random() * wordList.length)];
+    }
+    
     let res = [];
     for(let i=0; i<10; i++) {
+      res.push(wordList[Math.floor(Math.random() * wordList.length)]);
+    }
+    return res.join(' ');
+  } else if (levelIndex === 6) { // Symbols
+    let res = [];
+    for(let i=0; i<8; i++) {
       res.push(level.data[Math.floor(Math.random() * level.data.length)]);
     }
     return res.join(' ');
@@ -215,9 +260,12 @@ function renderKeyboard() {
 }
 
 function highlightNextKey() {
-  document.querySelectorAll('.key.highlight, .finger.active').forEach(el => {
-    el.classList.remove('highlight', 'active');
+  document.querySelectorAll('.key.highlight, .finger.active, .key.shift-highlight').forEach(el => {
+    el.classList.remove('highlight', 'active', 'shift-highlight');
   });
+  
+  const gigaTooltip = document.getElementById('gigaTooltip');
+  if (gigaTooltip) gigaTooltip.classList.remove('show');
   
   if (currentIndex >= targetText.length) return;
   const char = targetText[currentIndex];
@@ -266,9 +314,16 @@ function highlightNextKey() {
         shiftFinger = 'rp';
       }
       const shiftEl = document.getElementById(shiftCode);
-      if (shiftEl) shiftEl.classList.add('highlight');
+      if (shiftEl) {
+        shiftEl.classList.add('highlight');
+        if (currentLevel === 6) shiftEl.classList.add('shift-highlight');
+      }
       const sFinger = document.getElementById(`finger-${shiftFinger}`);
       if (sFinger) sFinger.classList.add('active');
+      
+      if (currentLevel === 6 && gigaTooltip) {
+        gigaTooltip.classList.add('show');
+      }
     }
   }
 }
@@ -294,7 +349,28 @@ function getTypedChar(e, lang) {
 
 function updateStats() {
   const now = new Date();
+  
+  if (startTime && currentLevel !== 3) {
+    const elapsedSeconds = Math.floor((now - startTime) / 1000);
+    timeLeftValue = 60 - elapsedSeconds;
+    
+    if (timeLeftValue <= 0) {
+      timeLeftValue = 0;
+      document.getElementById('timeLeft').innerText = 0;
+      clearInterval(timerInterval);
+      if (!isTimeUp) {
+        isTimeUp = true;
+        showModal(true);
+      }
+    } else {
+      document.getElementById('timeLeft').innerText = timeLeftValue;
+    }
+  } else {
+    document.getElementById('timeLeft').innerText = 60;
+  }
+  
   let timeDiff = startTime ? (now - startTime) / 1000 / 60 : 0.01;
+  if (timeLeftValue <= 0 && startTime) timeDiff = 1.0;
   if (timeDiff === 0) timeDiff = 0.01;
   
   const wordsTyped = totalTyped / 5;
@@ -306,10 +382,12 @@ function updateStats() {
   document.getElementById('score').innerText = Math.max(0, (totalTyped * 10) - (errors * 20));
 }
 
-function showModal() {
+function showModal(timeout = false) {
   const acc = totalTyped === 0 ? 100 : Math.round(((totalTyped - errors) / totalTyped) * 100);
   const now = new Date();
-  let timeDiff = (now - startTime) / 1000 / 60;
+  let elapsed = startTime ? (now - startTime) / 1000 : 0;
+  if (timeout) elapsed = 60;
+  let timeDiff = elapsed / 60;
   if (timeDiff === 0) timeDiff = 0.01;
   const wpm = Math.round((totalTyped / 5) / timeDiff);
   
@@ -320,6 +398,12 @@ function showModal() {
   if (acc >= 90) stars = '⭐⭐';
   if (acc >= 95 && wpm > 15) stars = '⭐⭐⭐';
   document.getElementById('modalStars').innerText = stars;
+  
+  if (timeout) {
+    document.getElementById('resultTitle').innerText = 'დრო ამოიწურა!';
+  } else {
+    document.getElementById('resultTitle').innerText = 'გილოცავთ! Level Complete!';
+  }
   
   document.getElementById('resultModal').classList.add('show');
 }
@@ -358,11 +442,33 @@ function startLevel() {
   errors = 0;
   totalTyped = 0;
   currentIndex = 0;
+  timeLeftValue = 60;
+  isTimeUp = false;
+  dictationWordsCount = 0;
+  document.getElementById('timeLeft').innerText = '60';
+  
+  currentLevel = parseInt(document.getElementById('levelSelect').value);
+  
+  if (currentLevel === 5) {
+    document.getElementById('langSelect').value = 'en';
+  }
   
   currentLang = document.getElementById('langSelect').value;
   document.body.setAttribute('data-lang', currentLang);
   
-  currentLevel = parseInt(document.getElementById('levelSelect').value);
+  if (currentLevel === 1 || currentLevel === 4 || currentLevel === 5) {
+    document.getElementById('categorySelect').style.display = 'inline-block';
+  } else {
+    document.getElementById('categorySelect').style.display = 'none';
+  }
+  
+  if (currentLevel === 5) {
+    document.getElementById('dictationBtn').style.display = 'block';
+    document.body.classList.add('level-5');
+  } else {
+    document.getElementById('dictationBtn').style.display = 'none';
+    document.body.classList.remove('level-5');
+  }
   
   if (currentLevel === 3) {
     document.body.classList.add('level-4');
@@ -380,27 +486,74 @@ function startLevel() {
     document.getElementById('freeTypingContainer').style.display = 'none';
   }
 
-  targetText = generateText(currentLang, currentLevel);
-  
+  if (currentLevel === 4 || currentLevel === 5) {
+    targetText = generateText(currentLang, 1);
+  } else if (currentLevel !== 3) {
+    targetText = generateText(currentLang, currentLevel);
+  }
+
   updateStats();
   
   const display = document.getElementById('textDisplay');
   display.innerHTML = '';
-  for (let i = 0; i < targetText.length; i++) {
-    const span = document.createElement('span');
-    span.className = 'char';
-    span.id = `char-${i}`;
-    span.innerText = targetText[i];
-    display.appendChild(span);
+  
+  if (currentLevel === 4) {
+    const words = targetText.split(' ');
+    let cIndex = 0;
+    let missingIndices = [];
+    for (let w of words) {
+      if (w.length > 0) {
+        let r = Math.floor(Math.random() * w.length);
+        missingIndices.push(cIndex + r);
+      }
+      cIndex += w.length + 1;
+    }
+    
+    let firstMissing = -1;
+    for (let i = 0; i < targetText.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'char';
+      span.id = `char-${i}`;
+      if (missingIndices.includes(i)) {
+        span.innerText = '_';
+        if (firstMissing === -1) firstMissing = i;
+      } else {
+        span.innerText = targetText[i];
+        span.classList.add('correct');
+      }
+      display.appendChild(span);
+    }
+    
+    if (firstMissing !== -1) {
+       currentIndex = firstMissing;
+       document.getElementById(`char-${currentIndex}`).classList.add('current');
+       highlightNextKey();
+    }
+  } else if (currentLevel !== 3) {
+    for (let i = 0; i < targetText.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'char';
+      span.id = `char-${i}`;
+      span.innerText = targetText[i];
+      display.appendChild(span);
+    }
+    
+    if(targetText.length > 0) {
+      document.getElementById('char-0').classList.add('current');
+      highlightNextKey();
+    }
   }
   
-  if(targetText.length > 0) {
-    document.getElementById('char-0').classList.add('current');
-    highlightNextKey();
+  if (currentLevel === 5) {
+    setTimeout(() => {
+      document.getElementById('dictationBtn').click();
+    }, 500);
   }
 }
 
 document.addEventListener('keydown', (e) => {
+  if (isTimeUp) return;
+  
   if (e.key === 'Escape') {
     document.getElementById('theoryModal').classList.remove('show');
     return;
@@ -463,13 +616,67 @@ document.addEventListener('keydown', (e) => {
     span.classList.remove('current', 'wrong');
     span.classList.add('correct');
     
+    if (currentLevel === 4) {
+       span.innerText = expectedChar;
+    }
+    
     currentIndex++;
     totalTyped++;
+    
+    while (currentIndex < targetText.length && document.getElementById(`char-${currentIndex}`).classList.contains('correct')) {
+       currentIndex++;
+    }
     
     if (currentIndex < targetText.length) {
       document.getElementById(`char-${currentIndex}`).classList.add('current');
       highlightNextKey();
     } else {
+      if (currentLevel === 5) {
+        dictationWordsCount++;
+        if (dictationWordsCount < 10) {
+           targetText = generateText(currentLang, 1);
+           currentIndex = 0;
+           
+           const display = document.getElementById('textDisplay');
+           display.innerHTML = '';
+           for (let i = 0; i < targetText.length; i++) {
+             const span = document.createElement('span');
+             span.className = 'char';
+             span.id = `char-${i}`;
+             span.innerText = targetText[i];
+             display.appendChild(span);
+           }
+           if (targetText.length > 0) {
+             document.getElementById('char-0').classList.add('current');
+             highlightNextKey();
+           }
+           
+           setTimeout(() => {
+             document.getElementById('dictationBtn').click();
+           }, 500);
+           
+           return;
+        }
+      } else if (currentLevel === 2) {
+        targetText = generateText(currentLang, currentLevel);
+        currentIndex = 0;
+        
+        const display = document.getElementById('textDisplay');
+        display.innerHTML = '';
+        for (let i = 0; i < targetText.length; i++) {
+          const span = document.createElement('span');
+          span.className = 'char';
+          span.id = `char-${i}`;
+          span.innerText = targetText[i];
+          display.appendChild(span);
+        }
+        if (targetText.length > 0) {
+          document.getElementById('char-0').classList.add('current');
+          highlightNextKey();
+        }
+        return;
+      }
+      
       clearInterval(timerInterval);
       updateStats();
       showModal();
@@ -500,6 +707,7 @@ document.addEventListener('keyup', (e) => {
 
 document.getElementById('langSelect').addEventListener('change', startLevel);
 document.getElementById('levelSelect').addEventListener('change', startLevel);
+document.getElementById('categorySelect').addEventListener('change', startLevel);
 document.getElementById('restartBtn').addEventListener('click', startLevel);
 document.getElementById('nextLevelBtn').addEventListener('click', () => {
   document.getElementById('resultModal').classList.remove('show');
@@ -511,6 +719,14 @@ document.getElementById('theoryBtn').addEventListener('click', () => {
 });
 document.getElementById('closeTheoryBtn').addEventListener('click', () => {
   document.getElementById('theoryModal').classList.remove('show');
+});
+
+document.getElementById('dictationBtn').addEventListener('click', () => {
+  if (!targetText) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(targetText);
+  utterance.lang = 'en-US';
+  window.speechSynthesis.speak(utterance);
 });
 
 document.getElementById('downloadBtn').addEventListener('click', () => {

@@ -175,12 +175,19 @@ header h1 {
 }
 
 .char.correct {
-  color: #8AC926;
+  color: #4CAF50;
 }
 
 .char.wrong {
-  color: #FF595E;
-  background-color: rgba(255, 89, 94, 0.2);
+  color: #F44336;
+  text-decoration: underline;
+}
+
+/* Level 5 (Dictation) hidden characters */
+body.level-5 .text-display .char:not(.correct):not(.wrong) {
+  color: transparent;
+  border-bottom: 2px solid #ccc;
+  background-color: #f9f9f9;
   border-radius: 4px;
 }
 
@@ -455,11 +462,54 @@ body[data-lang="en"] .key .shift-char {
 }
 
 .giga-image {
-  width: 200px;
-  height: auto;
-  max-height: 240px;
+  width: 140px;
+  max-height: 140px;
+  transition: transform 0.2s, opacity 0.2s;
   object-fit: contain;
-  transition: transform 0.2s;
+}
+
+/* Tooltip for Shift reminder */
+.giga-tooltip {
+  position: absolute;
+  top: -20px;
+  left: -80px;
+  background: #ffeb3b;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  transform: translateY(10px);
+  pointer-events: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+  white-space: nowrap;
+}
+.giga-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  margin-top: -8px;
+  border-width: 8px 0 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #ffeb3b;
+}
+.giga-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes pulse {
+  0% { background-color: var(--key-color); }
+  50% { background-color: #ff9800; color: white; border-color: #ff9800; transform: scale(1.05); }
+  100% { background-color: var(--key-color); }
+}
+
+.key.shift-highlight {
+  animation: pulse 1s infinite;
 }
 
 .giga-container.dance .giga-image {

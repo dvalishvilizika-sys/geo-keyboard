@@ -21,8 +21,17 @@
         <select id="levelSelect">
           <option value="0">ეტაპი 1: ასოები</option>
           <option value="1">ეტაპი 2: სიტყვები</option>
-          <option value="2">ეტაპი 3: ტექსტები</option>
-          <option value="3">ეტაპი 4: ჩემი წერილი / პროექტი</option>
+          <option value="2">ეტაპი 3: ტექსტები (Texts)</option>
+          <option value="4">ეტაპი 4: გამოტოვებული ასო (Guess)</option>
+          <option value="5">ეტაპი 5: ხმოვანი კარნახი (Dictation)</option>
+          <option value="6">ეტაპი 7: ციფრები და სიმბოლოები</option>
+          <option value="3">ეტაპი 6: ჩემი წერილი / პროექტი</option>
+        </select>
+        <select id="categorySelect" style="display: none;">
+          <option value="mixed">შერეული (Mixed)</option>
+          <option value="animals">ცხოველები (Animals)</option>
+          <option value="colors">ფერები (Colors)</option>
+          <option value="school">სასკოლო (School)</option>
         </select>
         <button id="theoryBtn">📖 თეორია და ინსტრუქცია</button>
         <button id="restartBtn">თავიდან დაწყება</button>
@@ -30,18 +39,20 @@
     </header>
     
     <div class="stats">
+      <div class="stat-box">დრო / Time:<br><span class="stat-val"><span id="timeLeft">60</span> წმ</span></div>
       <div class="stat-box">სიზუსტე / Acc:<br><span class="stat-val"><span id="accuracy">100</span>%</span></div>
-      
       <div class="stat-box">სიჩქარე / WPM:<br><span class="stat-val"><span id="wpm">0</span></span></div>
       <div class="stat-box">ქულა / Score:<br><span class="stat-val"><span id="score">0</span></span></div>
       
-      <!-- Giga The Robot Ant -->
-      <div class="giga-container" id="gigaContainer">
-        <img src="ant.png" alt="Giga the Ant" class="giga-image">
-        <div class="stars-container" id="starsContainer"></div>
+      <div id="gigaContainer" class="giga-container">
+        <div id="gigaTooltip" class="giga-tooltip">არ დაგავიწყდეს Shift!</div>
+        <img src="ant.png" alt="რობოტი გიგა" class="giga-image" />
+        <div id="starsContainer"></div>
       </div>
     </div>
     
+    <button id="dictationBtn" style="display:none; font-size: 20px; padding: 10px 20px; margin: 10px auto; border-radius: 8px; cursor: pointer; background: var(--primary-color); color: white; border: none;">🔊 მოსმენა (Listen)</button>
+
     <div class="text-display" id="textDisplay"></div>
     
     <div class="free-typing" id="freeTypingContainer" style="display: none;">
@@ -94,7 +105,7 @@
 
   <div class="modal-overlay" id="resultModal">
     <div class="modal">
-      <h2 id="modalTitle">გილოცავთ! Level Complete!</h2>
+      <h2 id="resultTitle">გილოცავთ! Level Complete!</h2>
       <div class="stars" id="modalStars">⭐⭐⭐</div>
       <p>სიჩქარე / Speed: <strong><span id="modalWpm"></span> WPM</strong></p>
       <p>სიზუსტე / Accuracy: <strong><span id="modalAccuracy"></span>%</strong></p>

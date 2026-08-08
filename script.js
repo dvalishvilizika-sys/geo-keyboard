@@ -1,3 +1,4 @@
+let deferredPrompt;
 const keyboardLayout = [
   // Row 1
   [{code: 'Backquote', en: '`', enShift: '~', ka: '`', kaShift: '~', finger: 'lp'},
@@ -1107,3 +1108,42 @@ if (allDoneCloseBtn) {
     startLevel();
   });
 }
+
+// PWA ინსტალაციის ლოგიკა
+const installAppBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // ვაჩერებთ ბრაუზერის სტანდარტულ, უხილავ მოქმედებას
+  e.preventDefault();
+  // ვიმახსოვრებთ ივენთს, რომ მოგვიანებით გამოვიძახოთ
+  deferredPrompt = e;
+  // ვაჩენთ ჩვენს ლამაზ ღილაკს ეკრანზე
+  if (installAppBtn) {
+    installAppBtn.style.display = 'inline-block';
+  }
+});
+
+if (installAppBtn) {
+  installAppBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      // ვაჩვენებთ ინსტალაციის შეთავაზების ფანჯარას
+      deferredPrompt.prompt();
+      // ველოდებით მომხმარებლის გადაწყვეტილებას
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`მომხმარებელმა აირჩია: ${outcome}`);
+      // ივენთი გამოყენებულია, ვანულებთ მას
+      deferredPrompt = null;
+      // ვმალავთ ღილაკს
+      installAppBtn.style.display = 'none';
+    }
+  });
+}
+
+// თუ მომხმარებელმა უკვე დააინსტალირა, ვმალავთ ღილაკს
+window.addEventListener('appinstalled', () => {
+  if (installAppBtn) {
+    installAppBtn.style.display = 'none';
+  }
+  deferredPrompt = null;
+  console.log('აპლიკაცია წარმატებით დაინსტალირდა!');
+});

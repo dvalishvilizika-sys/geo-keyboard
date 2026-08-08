@@ -951,75 +951,93 @@ body.hacker-mode .instruction-box {
    მობილური ვერსიის სტილები (სმარტფონები 768px-მდე)
    ========================================= */
 @media screen and (max-width: 768px) {
-  /* კონტროლის პანელი (ჩამოსაშლელი მენიუები) */
-  .controls, .header-controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-  
-  .controls select, .controls button {
+  /* კონტეინერის დაშორებების მინიმალიზაცია */
+  .container {
+    padding: 5px;
+    margin: 0 auto;
     width: 100%;
-    font-size: 16px;
-    padding: 10px;
   }
 
-  /* სტატისტიკის ბლოკები ორ რიგად რომ არ ჩაიკარგოს */
-  .stats {
+  /* მენიუ და სტატისტიკა */
+  .controls, .header-controls {
+    flex-direction: row;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  .controls select, .controls button {
+    padding: 5px;
+    font-size: 14px;
+    flex: 1 1 45%;
+  }
+  .stats {
+    gap: 5px;
+    margin-bottom: 5px;
   }
   .stats div {
-    flex: 1 1 45%; /* თითო ბლოკმა ეკრანის თითქმის ნახევარი დაიკავოს */
-    font-size: 14px;
-    padding: 8px;
+    padding: 4px;
+    font-size: 12px;
   }
   .stats div span {
-    font-size: 18px; /* ციფრების ზომის შემცირება */
+    font-size: 14px;
   }
 
-  /* რობოტი გიგა და ინსტრუქციის არეალი */
+  /* გიგა და ინსტრუქცია - სიმაღლის დასაზოგად ვსვამთ გვერდიგვერდ */
   .action-zone {
+    flex-direction: row;
+    align-items: center;
     height: auto;
-    min-height: 120px;
-    flex-direction: column;
-    margin: 10px 0;
+    min-height: 50px;
+    margin: 5px 0;
+  }
+  #gigaContainer {
+    position: static; /* ამოვიღოთ absolute-დან, რომ ეკრანი არ აირიოს */
+    margin-right: 10px;
+    transform: none !important; /* მობილურში სრიალი არ გვინდა */
   }
   .giga-image {
-    width: 60px; /* რობოტი ტელეფონში უფრო პატარა უნდა იყოს */
+    width: 45px;
   }
   .instruction-box {
-    width: 95%;
-    font-size: 14px;
-    padding: 10px;
-    margin-top: 40px; /* გიგასთვის ადგილის დასატოვებლად */
+    margin-top: 0;
+    padding: 5px 8px;
+    font-size: 12px;
+    width: 100%;
+    opacity: 1 !important; /* მობილურზე ყოველთვის ჩანდეს */
   }
 
   /* ასაკრეფი ტექსტის ველი */
   #textDisplay {
-    font-size: 22px; /* ტექსტის დაპატარავება მობილურისთვის */
-    padding: 15px 10px;
-    min-height: 80px;
-    word-wrap: break-word; /* გრძელი სიტყვები რომ არ გასცდეს ეკრანს */
+    font-size: 18px;
+    padding: 8px;
+    min-height: 50px;
+    margin-bottom: 5px;
   }
 
-  /* მოდალური ფანჯრები (ეტაპის გადასვლა, ფინალი) */
-  .modal-content {
-    width: 95%;
-    margin: 15% auto;
-    padding: 15px;
+  /* ვირტუალური კლავიატურის ულტრა-კომპრესია */
+  .keyboard {
+    gap: 3px;
+    padding: 5px;
   }
-  .modal-body h2 { font-size: 20px; }
-  .modal-body p { font-size: 14px; }
-  .bounce-giga { width: 70px !important; }
-
-  /* ვირტუალური კლავიატურა (თუ ეკრანზეა) */
   .keyboard-row {
-    gap: 2px;
+    gap: 3px;
   }
   .key {
-    padding: 10px 4px;
-    font-size: 14px;
+    padding: 8px 0; /* სიმაღლის შემცირება */
+    font-size: 13px;
+    min-width: 24px; /* ღილაკების სიგანის შემცირება */
     border-radius: 4px;
   }
+  .key.wide {
+    min-width: 40px;
+  }
+  .key.space {
+    min-width: 120px;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 127, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 0, 127, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 127, 0); }
 }

@@ -951,88 +951,91 @@ body.hacker-mode .instruction-box {
    მობილური ვერსიის სტილები (სმარტფონები 768px-მდე)
    ========================================= */
 @media screen and (max-width: 768px) {
-  /* კონტეინერის დაშორებების მინიმალიზაცია */
+  /* 1. აბსოლუტური ჩარჩოები (ჰორიზონტალური სქროლის დასაბლოკად) */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
   .container {
-    padding: 5px;
-    margin: 0 auto;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 2px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
   }
 
-  /* მენიუ და სტატისტიკა */
-  .controls, .header-controls {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 5px;
-  }
-  .controls select, .controls button {
-    padding: 5px;
-    font-size: 14px;
-    flex: 1 1 45%;
-  }
-  .stats {
-    gap: 5px;
-    margin-bottom: 5px;
-  }
-  .stats div {
-    padding: 4px;
-    font-size: 12px;
-  }
-  .stats div span {
-    font-size: 14px;
-  }
-
-  /* გიგა და ინსტრუქცია - სიმაღლის დასაზოგად ვსვამთ გვერდიგვერდ */
-  .action-zone {
-    flex-direction: row;
-    align-items: center;
-    height: auto;
-    min-height: 50px;
-    margin: 5px 0;
-  }
-  #gigaContainer {
-    position: static; /* ამოვიღოთ absolute-დან, რომ ეკრანი არ აირიოს */
-    margin-right: 10px;
-    transform: none !important; /* მობილურში სრიალი არ გვინდა */
-  }
-  .giga-image {
-    width: 45px;
-  }
-  .instruction-box {
-    margin-top: 0;
-    padding: 5px 8px;
-    font-size: 12px;
-    width: 100%;
-    opacity: 1 !important; /* მობილურზე ყოველთვის ჩანდეს */
-  }
-
-  /* ასაკრეფი ტექსტის ველი */
-  #textDisplay {
-    font-size: 18px;
-    padding: 8px;
-    min-height: 50px;
-    margin-bottom: 5px;
-  }
-
-  /* ვირტუალური კლავიატურის ულტრა-კომპრესია */
+  /* 2. ვირტუალური კლავიატურის ულტრა-მოქნილობა */
   .keyboard {
-    gap: 3px;
-    padding: 5px;
+    padding: 2px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
   .keyboard-row {
-    gap: 3px;
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 2px !important;
   }
   .key {
-    padding: 8px 0; /* სიმაღლის შემცირება */
-    font-size: 13px;
-    min-width: 24px; /* ღილაკების სიგანის შემცირება */
-    border-radius: 4px;
+    /* ფიქსირებული ზომის გაუქმება. დაიკავებს მხოლოდ იმას, რაც რჩება */
+    flex: 1 1 auto !important; 
+    min-width: 0 !important; 
+    padding: 6px 0 !important;
+    font-size: 11px !important;
+    border-radius: 4px !important;
   }
-  .key.wide {
-    min-width: 40px;
+  .key.wide { flex: 1.5 1 auto !important; }
+  .key.space { flex: 4 1 auto !important; }
+
+  /* 3. ზედა ნაწილის (სტატისტიკა/ტექსტი) მაქსიმალური ვერტიკალური შეკუმშვა */
+  .controls, .header-controls, .stats {
+    margin-bottom: 2px !important;
+    gap: 2px !important;
   }
-  .key.space {
-    min-width: 120px;
+  .controls select, .controls button {
+    padding: 4px !important;
+    font-size: 12px !important;
+  }
+  .stats div {
+    padding: 2px !important;
+    font-size: 11px !important;
+  }
+  .stats div span {
+    font-size: 12px !important;
+  }
+
+  /* 4. გიგა და ინსტრუქცია კომპაქტურად */
+  .action-zone {
+    min-height: auto !important;
+    margin: 2px 0 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  #gigaContainer {
+    position: static !important; 
+    transform: none !important; 
+    margin-right: 5px !important;
+  }
+  .giga-image { 
+    width: 35px !important; 
+  }
+  .instruction-box {
+    padding: 4px 6px !important;
+    font-size: 11px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    opacity: 1 !important;
+  }
+
+  /* 5. ასაკრეფი ტექსტის ველი */
+  #textDisplay {
+    min-height: 40px !important;
+    font-size: 16px !important;
+    padding: 5px !important;
+    margin-bottom: 2px !important;
   }
 }
 

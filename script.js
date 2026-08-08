@@ -82,7 +82,7 @@ const levels = {
       'ჯანსაღი კვება და ვარჯიში აუცილებელია ძლიერი ორგანიზმისთვის.',
       'ჩემი ოცნებაა გავხდე პროგრამისტი და შევქმნა მაგარი თამაშები.'
     ] },
-    { name: 'ეტაპი 7: ციფრები და სიმბოლოები', data: ['123!', '?.,', '(10)', '45-67', '@email', '100%', 'A+B=C', '"hello"', '5*5=25', '#tag'] }
+    { name: 'ეტაპი 6: ციფრები და სიმბოლოები', data: ['123!', '?.,', '(10)', '45-67', '@email', '100%', 'A+B=C', '"hello"', '5*5=25', '#tag'] }
   ],
   en: [
     { name: 'Stage 1: Letters', data: ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'] },
@@ -105,7 +105,7 @@ const levels = {
       'Healthy food and exercise are essential for a strong body.',
       'My dream is to become a programmer and create awesome games.'
     ] },
-    { name: 'Stage 7: Numbers & Symbols', data: ['123!', '?.,', '(10)', '45-67', '@email', '100%', 'A+B=C', '"hello"', '5*5=25', '#tag'] }
+    { name: 'Stage 6: Numbers & Symbols', data: ['123!', '?.,', '(10)', '45-67', '@email', '100%', 'A+B=C', '"hello"', '5*5=25', '#tag'] }
   ]
 };
 
@@ -117,10 +117,19 @@ let errors = 0;
 let totalTyped = 0;
 let startTime = null;
 let timerInterval = null;
-let audioCtx = null;
+let isGameStarted = false;
+let currentTaskCount = 1;
+const maxTasks = 3;
+
+// --- LEADERBOARD & REGISTRATION ---
+let studentName = '';
+let studentGrade = '';
+let userSessionResults = [];
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzANXGEqYAz6ZFV5qwaVF8AbjA7-SEknW0DKwRbskXIa_Aa2gqP7UtMKzjgRNx0tY2pkw/exec';
 let timeLeftValue = 60;
 let isTimeUp = false;
 let dictationWordsCount = 0;
+let audioCtx = null;
 
 // Audio generation
 function playSound(type) {
@@ -154,43 +163,67 @@ function playSound(type) {
   }
 }
 
+let lastTaskContent = "";
+
 function generateText(lang, levelIndex) {
-  let arrayIndex = levelIndex;
-  if (levelIndex === 6) arrayIndex = 3;
-  const level = levels[lang][arrayIndex];
+  let targetArray = [];
   
-  if (levelIndex === 0) { // Letters
-    let res = [];
-    for(let i=0; i<6; i++) {
-      let chunk = "";
-      for(let j=0; j<4; j++) {
-        chunk += level.data[Math.floor(Math.random() * level.data.length)];
-      }
-      res.push(chunk);
-    }
-    return res.join(' ');
-  } else if (levelIndex === 1) { // Words
+  if (levelIndex === 0) {
+    targetArray = gameData.letters;
+  } else if (levelIndex === 1) {
     const cat = document.getElementById('categorySelect').value;
-    const wordList = level.categories[cat] || level.categories.mixed;
-    
-    if (currentLevel === 5) {
-      return wordList[Math.floor(Math.random() * wordList.length)];
-    }
-    
-    let res = [];
-    for(let i=0; i<10; i++) {
-      res.push(wordList[Math.floor(Math.random() * wordList.length)]);
-    }
-    return res.join(' ');
-  } else if (levelIndex === 6) { // Symbols
-    let res = [];
-    for(let i=0; i<8; i++) {
-      res.push(level.data[Math.floor(Math.random() * level.data.length)]);
-    }
-    return res.join(' ');
-  } else { // Texts
-    return level.data[Math.floor(Math.random() * level.data.length)];
+    targetArray = gameData.words[cat] || gameData.words.school;
+  } else if (levelIndex === 2) {
+    targetArray = gameData.sentences;
+  } else if (levelIndex === 3) {
+    targetArray = gameData.words.school; // Fallback to words because missing letters logic breaks if string has _
+  } else if (levelIndex === 4) {
+    targetArray = gameData.dictation;
+  } else if (levelIndex === 5) {
+    targetArray = gameData.symbols;
+  } else {
+    targetArray = gameData.words.school;
   }
+
+  let newTask = "";
+  let elementsToPick = 1; 
+
+  if (levelIndex === 0) {
+    elementsToPick = 20; // ეტაპი 1 (ასოები)
+  } else if (levelIndex === 1) {
+    elementsToPick = 8; // ეტაპი 2 (სიტყვები)
+  } else if (levelIndex === 3) {
+    elementsToPick = 6; // ეტაპი 4 (გამოტოვებული ასოები)
+  } else if (levelIndex === 5) {
+    elementsToPick = 15; // ეტაპი 6 (სიმბოლოები)
+  } else if (levelIndex === 2) {
+    elementsToPick = 2; // ეტაპი 3 (წინადადებები)
+  }
+
+  let maxAttempts = 10;
+  let attempts = 0;
+
+  do {
+    let tempArray = [];
+    let lastElement = "";
+    for (let i = 0; i < elementsToPick; i++) {
+      let randomElement;
+      let innerAttempts = 0;
+      do {
+        const randomIndex = Math.floor(Math.random() * targetArray.length);
+        randomElement = targetArray[randomIndex];
+        innerAttempts++;
+      } while (randomElement === lastElement && innerAttempts < 10 && targetArray.length > 1);
+      
+      tempArray.push(randomElement);
+      lastElement = randomElement;
+    }
+    newTask = tempArray.join(" "); // ვაერთებთ სიტყვებს/ასოებს გამოტოვებული სივრცით
+    attempts++;
+  } while (newTask === lastTaskContent && attempts < maxAttempts && targetArray.length > 1);
+
+  lastTaskContent = newTask;
+  return newTask;
 }
 
 let virtualShift = false;
@@ -267,6 +300,9 @@ function highlightNextKey() {
   const gigaTooltip = document.getElementById('gigaTooltip');
   if (gigaTooltip) gigaTooltip.classList.remove('show');
   
+  // Disable visual hints for Free Typing(6), Guess(3), and Dictation(4) modes
+  if (currentLevel === 6 || currentLevel === 3 || currentLevel === 4) return;
+  
   if (currentIndex >= targetText.length) return;
   const char = targetText[currentIndex];
   
@@ -316,12 +352,12 @@ function highlightNextKey() {
       const shiftEl = document.getElementById(shiftCode);
       if (shiftEl) {
         shiftEl.classList.add('highlight');
-        if (currentLevel === 6) shiftEl.classList.add('shift-highlight');
+        if (currentLevel === 5) shiftEl.classList.add('shift-highlight');
       }
       const sFinger = document.getElementById(`finger-${shiftFinger}`);
       if (sFinger) sFinger.classList.add('active');
       
-      if (currentLevel === 6 && gigaTooltip) {
+      if (currentLevel === 5 && gigaTooltip) {
         gigaTooltip.classList.add('show');
       }
     }
@@ -350,7 +386,7 @@ function getTypedChar(e, lang) {
 function updateStats() {
   const now = new Date();
   
-  if (startTime && currentLevel !== 3) {
+  if (startTime && currentLevel !== 6) {
     const elapsedSeconds = Math.floor((now - startTime) / 1000);
     timeLeftValue = 60 - elapsedSeconds;
     
@@ -389,8 +425,12 @@ function showModal(timeout = false) {
   if (timeout) elapsed = 60;
   let timeDiff = elapsed / 60;
   if (timeDiff === 0) timeDiff = 0.01;
-  const wpm = Math.round((totalTyped / 5) / timeDiff);
-  
+  const elapsedMinutes = (now - startTime) / 60000;
+  const wpm = elapsedMinutes > 0 ? Math.round((totalTyped / 5) / elapsedMinutes) : 0;
+    
+  // Store result in session memory instead of submitting immediately
+  userSessionResults.push({ wpm: wpm, accuracy: acc });
+    
   document.getElementById('modalWpm').innerText = wpm;
   document.getElementById('modalAccuracy').innerText = acc;
   
@@ -401,11 +441,10 @@ function showModal(timeout = false) {
   
   if (timeout) {
     document.getElementById('resultTitle').innerText = 'დრო ამოიწურა!';
+    document.getElementById('resultModal').classList.add('show');
   } else {
-    document.getElementById('resultTitle').innerText = 'გილოცავთ! Level Complete!';
+    document.getElementById('nextStageModal').classList.add('show');
   }
-  
-  document.getElementById('resultModal').classList.add('show');
 }
 
 function triggerGigaCorrect() {
@@ -436,33 +475,78 @@ function triggerGigaWrong() {
   giga.classList.add('shake-head');
 }
 
+let gigaIsOnLeft = true;
+
+function moveGiga() {
+  const gigaContainer = document.getElementById('gigaContainer');
+  const stageInstruction = document.getElementById('stageInstruction');
+  const gigaImage = document.querySelector('.giga-image');
+  if (!gigaContainer || !stageInstruction || !gigaImage) return;
+
+  // 1. ინსტრუქციის ტექსტი მაშინვე ქრება
+  stageInstruction.style.opacity = '0';
+
+  // 2. გიგა იცვლის მხარეს
+  gigaIsOnLeft = !gigaIsOnLeft;
+
+  // გავასუფთაოთ კონტეინერზე არსებული ძველი ტრანსფორმაცია
+  gigaContainer.style.transform = 'none';
+
+  if (gigaIsOnLeft) {
+    gigaContainer.style.left = '10%';
+    gigaImage.style.transform = 'scaleX(1)';
+  } else {
+    gigaContainer.style.left = '80%';
+    gigaImage.style.transform = 'scaleX(-1)';
+  }
+
+  // 3. 1 წამის შემდეგ გამოდის ინსტრუქცია
+  setTimeout(() => {
+    let instructionText = "";
+    switch (currentLevel) {
+      case 0:
+        instructionText = "📖 მოათავსე თითები საწყის პოზიციაზე (A S D F და J K L ;) და ივარჯიშე ასოების სწორად აკრეფაში!";
+        break;
+      case 1:
+        instructionText = "📖 სიტყვების აკრეფის დროა! ყურადღებით დააკვირდი თითოეულ ასოს და ეცადე, არ შეგეშალოს.";
+        break;
+      case 2:
+        instructionText = "📖 ახლა მთლიანი წინადადებები უნდა ავკრიფოთ! სიტყვების გამოსაყოფად არ დაგავიწყდეს ჰარის (Space) გამოყენება.";
+        break;
+      case 3:
+        instructionText = "📖 დააკვირდი სიტყვას, გამოიცანი რომელი ასო აკლია და ჩასვი ზუსტად!";
+        break;
+      case 4:
+        instructionText = "📖 ხმოვანი კარნახი: დააჭირე მოსმენის ღილაკს და ყურადღებით აკრიფე ის, რასაც გაიგონებ.";
+        break;
+      case 5:
+        instructionText = "📖 დიდი ასოებისა და სასვენი ნიშნების დასაწერად არ დაგავიწყდეს Shift ღილაკის გამოყენება!";
+        break;
+      case 6:
+        instructionText = "📖 ფინალური პროექტი! თავისუფლად დაწერე ტექსტი, დაიცავი წესები და შეამოწმე შენი ცოდნა.";
+        break;
+    }
+    stageInstruction.innerText = instructionText;
+    stageInstruction.style.opacity = '1';
+  }, 1000);
+}
+
 function startLevel() {
-  clearInterval(timerInterval);
-  startTime = null;
-  errors = 0;
-  totalTyped = 0;
-  currentIndex = 0;
-  timeLeftValue = 60;
-  isTimeUp = false;
-  dictationWordsCount = 0;
-  document.getElementById('timeLeft').innerText = '60';
-  
   currentLevel = parseInt(document.getElementById('levelSelect').value);
-  
-  if (currentLevel === 5) {
+  moveGiga();
+  if (currentLevel === 4 || currentLevel === 5) {
     document.getElementById('langSelect').value = 'en';
   }
-  
   currentLang = document.getElementById('langSelect').value;
   document.body.setAttribute('data-lang', currentLang);
   
-  if (currentLevel === 1 || currentLevel === 4 || currentLevel === 5) {
+  if (currentLevel === 1 || currentLevel === 3 || currentLevel === 4) {
     document.getElementById('categorySelect').style.display = 'inline-block';
   } else {
     document.getElementById('categorySelect').style.display = 'none';
   }
   
-  if (currentLevel === 5) {
+  if (currentLevel === 4) {
     document.getElementById('dictationBtn').style.display = 'block';
     document.body.classList.add('level-5');
   } else {
@@ -470,7 +554,8 @@ function startLevel() {
     document.body.classList.remove('level-5');
   }
   
-  if (currentLevel === 3) {
+  if (currentLevel === 6) {
+    document.getElementById('taskProgress').style.display = 'none';
     document.body.classList.add('level-4');
     document.getElementById('textDisplay').style.display = 'none';
     document.getElementById('freeTypingContainer').style.display = 'flex';
@@ -481,14 +566,25 @@ function startLevel() {
     document.getElementById('freeTypingArea').focus();
     return;
   } else {
+    document.getElementById('taskProgress').style.display = 'inline-block';
+    document.getElementById('taskProgress').innerText = `დავალება 1/${maxTasks}`;
     document.body.classList.remove('level-4');
     document.getElementById('textDisplay').style.display = 'block';
     document.getElementById('freeTypingContainer').style.display = 'none';
   }
+  clearInterval(timerInterval);
+  startTime = null;
+  isGameStarted = false;
+  errors = 0;
+  totalTyped = 0;
+  currentIndex = 0;
+  timeLeftValue = 60;
+  isTimeUp = false;
+  dictationWordsCount = 0;
+  currentTaskCount = 1;
+  document.getElementById('timeLeft').innerText = '60';
 
-  if (currentLevel === 4 || currentLevel === 5) {
-    targetText = generateText(currentLang, 1);
-  } else if (currentLevel !== 3) {
+  if (currentLevel !== 6) {
     targetText = generateText(currentLang, currentLevel);
   }
 
@@ -497,7 +593,7 @@ function startLevel() {
   const display = document.getElementById('textDisplay');
   display.innerHTML = '';
   
-  if (currentLevel === 4) {
+  if (currentLevel === 3) {
     const words = targetText.split(' ');
     let cIndex = 0;
     let missingIndices = [];
@@ -544,7 +640,7 @@ function startLevel() {
     }
   }
   
-  if (currentLevel === 5) {
+  if (currentLevel === 4) {
     setTimeout(() => {
       document.getElementById('dictationBtn').click();
     }, 500);
@@ -570,7 +666,7 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   
-  if (currentLevel === 3) {
+  if (currentLevel === 6) {
     const el = document.getElementById(e.code);
     if(el) el.classList.add('active');
     triggerGigaCorrect();
@@ -600,13 +696,15 @@ document.addEventListener('keydown', (e) => {
 
   if (currentIndex >= targetText.length) return;
 
-  if (!startTime) {
+  if (!isGameStarted) {
+    isGameStarted = true;
     startTime = new Date();
     timerInterval = setInterval(updateStats, 1000);
   }
 
   const expectedChar = targetText[currentIndex];
-  const typedChar = getTypedChar(e, currentLang);
+  // For symbols/numbers level (5) always match in English mode
+  const typedChar = getTypedChar(e, (currentLevel === 5) ? 'en' : currentLang);
   
   if (typedChar === expectedChar) {
     playSound('correct');
@@ -616,7 +714,7 @@ document.addEventListener('keydown', (e) => {
     span.classList.remove('current', 'wrong');
     span.classList.add('correct');
     
-    if (currentLevel === 4) {
+    if (currentLevel === 3) {
        span.innerText = expectedChar;
     }
     
@@ -631,55 +729,92 @@ document.addEventListener('keydown', (e) => {
       document.getElementById(`char-${currentIndex}`).classList.add('current');
       highlightNextKey();
     } else {
-      if (currentLevel === 5) {
-        dictationWordsCount++;
-        if (dictationWordsCount < 10) {
-           targetText = generateText(currentLang, 1);
-           currentIndex = 0;
-           
-           const display = document.getElementById('textDisplay');
-           display.innerHTML = '';
-           for (let i = 0; i < targetText.length; i++) {
-             const span = document.createElement('span');
-             span.className = 'char';
-             span.id = `char-${i}`;
-             span.innerText = targetText[i];
-             display.appendChild(span);
-           }
-           if (targetText.length > 0) {
-             document.getElementById('char-0').classList.add('current');
-             highlightNextKey();
-           }
-           
-           setTimeout(() => {
-             document.getElementById('dictationBtn').click();
-           }, 500);
-           
-           return;
+      // One task done
+      currentTaskCount++;
+      const progressEl = document.getElementById('taskProgress');
+      if (progressEl) progressEl.innerText = `დავალება ${currentTaskCount}/${maxTasks}`;
+
+      if (currentTaskCount > maxTasks) {
+        // All tasks for this level completed — auto advance
+        clearInterval(timerInterval);
+        const levelSelect = document.getElementById('levelSelect');
+        const currentIdx = levelSelect.selectedIndex;
+        const maxIdx = levelSelect.options.length - 1;
+        
+        if (currentIdx < maxIdx) {
+          alert("ყოჩაღ! შენ გადახვედი შემდეგ ეტაპზე.");
+          levelSelect.selectedIndex = currentIdx + 1;
+          startLevel();
+        } else {
+          alert("გილოცავ! შენ გაიარე ყველა ეტაპი და გახდი კლავიატურის ოსტატი!");
+          startLevel();
         }
-      } else if (currentLevel === 2) {
+      } else {
+        // Reset sub-task state (timer pauses until first keypress)
+        clearInterval(timerInterval);
+        isGameStarted = false;
+        startTime = null;
+        timeLeftValue = 60;
+        isTimeUp = false;
+        document.getElementById('timeLeft').innerText = '60';
+
+        // Load next text for same level
         targetText = generateText(currentLang, currentLevel);
         currentIndex = 0;
-        
+
         const display = document.getElementById('textDisplay');
         display.innerHTML = '';
-        for (let i = 0; i < targetText.length; i++) {
-          const span = document.createElement('span');
-          span.className = 'char';
-          span.id = `char-${i}`;
-          span.innerText = targetText[i];
-          display.appendChild(span);
+        
+        if (currentLevel === 3) {
+          const words = targetText.split(' ');
+          let cIndex = 0;
+          let missingIndices = [];
+          for (let w of words) {
+            if (w.length > 0) {
+              let r = Math.floor(Math.random() * w.length);
+              missingIndices.push(cIndex + r);
+            }
+            cIndex += w.length + 1;
+          }
+          
+          let firstMissing = -1;
+          for (let i = 0; i < targetText.length; i++) {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.id = `char-${i}`;
+            if (missingIndices.includes(i)) {
+              span.innerText = '_';
+              if (firstMissing === -1) firstMissing = i;
+            } else {
+              span.innerText = targetText[i];
+              span.classList.add('correct');
+            }
+            display.appendChild(span);
+          }
+          
+          if (firstMissing !== -1) {
+             currentIndex = firstMissing;
+             document.getElementById(`char-${currentIndex}`).classList.add('current');
+             highlightNextKey();
+          }
+        } else {
+          for (let i = 0; i < targetText.length; i++) {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.id = `char-${i}`;
+            span.innerText = targetText[i];
+            display.appendChild(span);
+          }
+          if (targetText.length > 0) {
+            document.getElementById('char-0').classList.add('current');
+            highlightNextKey();
+          }
         }
-        if (targetText.length > 0) {
-          document.getElementById('char-0').classList.add('current');
-          highlightNextKey();
+
+        if (currentLevel === 4) {
+          setTimeout(() => document.getElementById('dictationBtn').click(), 500);
         }
-        return;
       }
-      
-      clearInterval(timerInterval);
-      updateStats();
-      showModal();
     }
   } else {
     if (typedChar.length === 1) {
@@ -705,14 +840,40 @@ document.addEventListener('keyup', (e) => {
   if(el) el.classList.remove('active');
 });
 
-document.getElementById('langSelect').addEventListener('change', startLevel);
-document.getElementById('levelSelect').addEventListener('change', startLevel);
-document.getElementById('categorySelect').addEventListener('change', startLevel);
-document.getElementById('restartBtn').addEventListener('click', startLevel);
-document.getElementById('nextLevelBtn').addEventListener('click', () => {
-  document.getElementById('resultModal').classList.remove('show');
-  startLevel();
-});
+const _lang = document.getElementById('langSelect');
+if (_lang) _lang.addEventListener('change', startLevel);
+const _level = document.getElementById('levelSelect');
+if (_level) _level.addEventListener('change', startLevel);
+const _cat = document.getElementById('categorySelect');
+if (_cat) _cat.addEventListener('change', startLevel);
+const _restart = document.getElementById('restartBtn');
+if (_restart) _restart.addEventListener('click', startLevel);
+
+const nextLevelBtn = document.getElementById('nextLevelBtn');
+if (nextLevelBtn) {
+  nextLevelBtn.addEventListener('click', () => {
+    document.getElementById('resultModal').classList.remove('show');
+    startLevel();
+  });
+}
+
+const autoNextBtn = document.getElementById('autoNextStageBtn');
+if (autoNextBtn) {
+  autoNextBtn.addEventListener('click', () => {
+    const modal = document.getElementById('nextStageModal');
+    if (modal) modal.classList.remove('show');
+    
+    const levelSelect = document.getElementById('levelSelect');
+    const currentIdx = levelSelect.selectedIndex;
+    const maxIdx = levelSelect.options.length - 1;
+    
+    if (currentIdx < maxIdx) {
+      levelSelect.selectedIndex = currentIdx + 1;
+    }
+    // Whether last level or not, call startLevel to reset state
+    startLevel();
+  });
+}
 
 document.getElementById('theoryBtn').addEventListener('click', () => {
   document.getElementById('theoryModal').classList.add('show');
@@ -742,5 +903,164 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
   a.click();
 });
 
-renderKeyboard();
-startLevel();
+document.getElementById('closeProjectBtn').addEventListener('click', () => {
+  document.getElementById('projectModal').classList.remove('show');
+});
+
+document.getElementById('checkProjectBtn').addEventListener('click', () => {
+  const text = document.getElementById('freeTypingArea').value || '';
+  
+  const isLengthOk = text.length >= 40;
+  const isPunctOk = /[.,!?]/.test(text);
+  const isShiftOk = /[A-Zჭღშძჟჩთ]/.test(text);
+  
+  const updateCrit = (id, isOk) => {
+    const el = document.getElementById(id);
+    if (isOk) {
+      el.innerText = '✔';
+      el.className = 'crit-icon success';
+    } else {
+      el.innerText = '✖';
+      el.className = 'crit-icon fail';
+    }
+  };
+  
+  updateCrit('critLengthIcon', isLengthOk);
+  updateCrit('critPunctIcon', isPunctOk);
+  updateCrit('critShiftIcon', isShiftOk);
+  
+  const msgEl = document.getElementById('projectModalMessage');
+  if (isLengthOk && isPunctOk && isShiftOk) {
+    msgEl.innerText = "ყოჩაღ! შენი პროექტი იდეალურია!";
+    msgEl.style.color = "#4caf50";
+    playSound('correct');
+    
+    // Calculate and submit overall average score
+    let avgWpm = 0;
+    let avgAcc = 0;
+    if (userSessionResults.length > 0) {
+      let sumWpm = 0;
+      let sumAcc = 0;
+      userSessionResults.forEach(res => {
+        sumWpm += res.wpm;
+        sumAcc += res.accuracy;
+      });
+      avgWpm = Math.round(sumWpm / userSessionResults.length);
+      avgAcc = Math.round(sumAcc / userSessionResults.length);
+    }
+    saveResultToDatabase(avgWpm, avgAcc);
+    
+    // Confetti / Stars
+    triggerFireworks();
+  } else {
+    msgEl.innerText = "გთხოვ, დააკმაყოფილო ყველა პირობა!";
+    msgEl.style.color = "#f44336";
+    playSound('wrong');
+  }
+  
+  document.getElementById('projectModal').classList.add('show');
+});
+
+// --- LEADERBOARD & REGISTRATION ---
+// (Variables declared at top of file)
+
+const startAppBtn = document.getElementById('startAppBtn');
+if (startAppBtn) {
+  startAppBtn.addEventListener('click', () => {
+    const nameEl = document.getElementById('studentName');
+    const gradeEl = document.getElementById('studentGrade');
+    if (!nameEl || !gradeEl) return;
+    
+    const nameInput = nameEl.value.trim();
+    const gradeInput = gradeEl.value.trim();
+    
+    if (!nameInput || !gradeInput) {
+      alert('გთხოვ, შეავსო ორივე ველი!');
+      return;
+    }
+    
+    studentName = nameInput;
+    studentGrade = gradeInput;
+    
+    const modal = document.getElementById('registrationModal');
+    if (modal) modal.classList.remove('show');
+    
+    // Render keyboard and load level AFTER registration
+    renderKeyboard();
+    startLevel();
+  });
+}
+
+function saveResultToDatabase(finalWpm, finalAccuracy) {
+    if (!studentName || !studentGrade) return;
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: studentName,
+            grade: studentGrade,
+            wpm: finalWpm,
+            accuracy: finalAccuracy,
+            date: new Date().toLocaleDateString()
+        })
+    }).then(() => console.log("მონაცემები გაიგზავნა!"))
+      .catch(err => console.error("შეცდომა:", err));
+}
+
+function loadLeaderboard() {
+  document.getElementById('leaderboardModal').classList.add('show');
+  document.getElementById('leaderboardLoading').style.display = 'block';
+  document.getElementById('leaderboardLoading').innerText = "იტვირთება მონაცემები...";
+  document.getElementById('leaderboardTable').style.display = 'none';
+  
+  fetch(SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('leaderboardBody');
+      tbody.innerHTML = '';
+      
+      data.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${row.name || 'უცნობი'}</td>
+          <td>${row.grade || '-'}</td>
+          <td>${row.wpm || 0}</td>
+          <td>${row.accuracy || 0}%</td>
+          <td>${row.date ? new Date(row.date).toLocaleDateString() : '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      document.getElementById('leaderboardLoading').style.display = 'none';
+      document.getElementById('leaderboardTable').style.display = 'table';
+    })
+    .catch(e => {
+      document.getElementById('leaderboardLoading').innerText = "ვერ მოხერხდა მონაცემების ჩატვირთვა.";
+      console.error(e);
+    });
+}
+
+const top10Btn = document.getElementById('top10Btn');
+if (top10Btn) top10Btn.addEventListener('click', loadLeaderboard);
+
+const closeLeaderboardBtn = document.getElementById('closeLeaderboardBtn');
+if (closeLeaderboardBtn) {
+  closeLeaderboardBtn.addEventListener('click', () => {
+    document.getElementById('leaderboardModal').classList.remove('show');
+  });
+}
+
+// Do NOT call renderKeyboard() or startLevel() here.
+// They are called inside startAppBtn handler AFTER registration.
+
+function triggerFireworks() {
+  var duration = 3 * 1000;
+  var end = Date.now() + duration;
+  (function frame() {
+    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, zIndex: 9999, colors: ['#ff0000', '#00ff00', '#0000ff', '#ffeb3b', '#ff9800'] });
+    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, zIndex: 9999, colors: ['#ff0000', '#00ff00', '#0000ff', '#ffeb3b', '#ff9800'] });
+    if (Date.now() < end) { requestAnimationFrame(frame); }
+  }());
+}

@@ -318,14 +318,28 @@ body[data-lang="en"] .key .shift-char {
   display: none;
 }
 
-.hands-container {
+.keyboard-area {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.keyboard-area .keyboard {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.hand-side {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 60px;
+  flex-shrink: 0;
 }
 
 .hand {
-  width: 150px;
+  width: 85px;
   height: auto;
 }
 
@@ -451,21 +465,69 @@ body[data-lang="en"] .key .shift-char {
 }
 
 /* Giga Styles */
+.action-zone {
+  position: relative;
+  height: 120px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
 .giga-container {
   width: 200px;
   height: 240px;
-  position: relative;
+  position: absolute;
+  top: 10px;
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  transition: left 1s ease-in-out, transform 0.3s ease;
+}
+
+.instruction-box {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  padding: 15px 25px;
+  background: rgba(33, 150, 243, 0.1);
+  border: 2px solid #2196f3;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #2196f3;
+  text-align: center;
+  max-width: 60%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .giga-image {
   width: 140px;
   max-height: 140px;
-  transition: transform 0.2s, opacity 0.2s;
+  transition: transform 0.6s ease, left 0.6s ease, opacity 0.2s;
   object-fit: contain;
+  position: relative;
+  left: 0;
+}
+
+.giga-image.face-left {
+  transform: scaleX(-1);
+}
+
+.giga-image.face-right {
+  transform: scaleX(1);
+}
+
+.giga-image.slide {
+  /* This class can trigger a slide effect. For example, moving 50px left/right before settling back */
+  animation: slideAnim 0.6s ease;
+}
+
+@keyframes slideAnim {
+  0% { left: 0px; }
+  50% { left: -30px; }
+  100% { left: 0px; }
 }
 
 /* Tooltip for Shift reminder */
@@ -699,12 +761,12 @@ body.level-4 .giga-image {
   .key.wide-2-5 { flex: 2.5 1 45px; }
   .key.spacebar { flex: 6 1 100px; }
   
-  .hands-container {
-    gap: 10px;
+  .keyboard-area {
+    flex-direction: column;
   }
   
-  .hand {
-    width: 90px;
+  .hand-side {
+    display: none;
   }
   
   .app-footer {
@@ -722,7 +784,130 @@ body.level-4 .giga-image {
   .key .main-char {
     font-size: 0.8em;
   }
-  .hands-container {
-    display: none; /* Hide hands on very small screens to save space */
+  .hand-side {
+    display: none;
   }
+}
+
+.free-typing-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.check-btn {
+  background-color: #9c27b0;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+.check-btn:hover {
+  background-color: #7b1fa2;
+  transform: scale(1.05);
+}
+
+.criteria-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-size: 16px;
+}
+
+.criteria-list li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.crit-icon {
+  display: inline-block;
+  width: 24px;
+  text-align: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.crit-icon.success {
+  color: #4caf50;
+}
+
+.crit-icon.fail {
+  color: #f44336;
+}
+
+.top10-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.top10-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.app-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.app-header .logo img {
+  height: 150px;
+}
+
+.app-header .logo h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #2196f3;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.leaderboard-table th, .leaderboard-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.leaderboard-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+
+.leaderboard-table tr:hover {
+  background-color: #f9f9f9;
 }

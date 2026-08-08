@@ -8,47 +8,64 @@
 </head>
 <body data-lang="ka">
   <div class="container">
-    <header>
-      <div class="logo-title">
-        <img src="key_abg.png" alt="Logo" class="app-logo">
-        <h1>კლავიატურის ოსტატი</h1>
+    <!-- გასწორდა: header აქ იხსნება და დაიხურება მხოლოდ controls ბლოკის ბოლოს -->
+    <header class="app-header">
+      <div class="logo">
+        <img src="key_abg.png" alt="Geo Keyboard Logo">
+        <h1>Geo Keyboard - კლავიატურის ოსტატი</h1>
       </div>
+      <button id="top10Btn" class="top10-btn">🏆 Top 10 ოსტატი</button>
+      
       <div class="controls">
         <select id="langSelect">
           <option value="ka">🇬🇪 ქართული</option>
           <option value="en">🇬🇧 English</option>
         </select>
+        
+        <!-- გასწორდა: ამოღებულია ზედმეტი ინგლისური მინაწერები (Texts, Guess...) -->
         <select id="levelSelect">
           <option value="0">ეტაპი 1: ასოები</option>
           <option value="1">ეტაპი 2: სიტყვები</option>
-          <option value="2">ეტაპი 3: ტექსტები (Texts)</option>
-          <option value="4">ეტაპი 4: გამოტოვებული ასო (Guess)</option>
-          <option value="5">ეტაპი 5: ხმოვანი კარნახი (Dictation)</option>
-          <option value="6">ეტაპი 7: ციფრები და სიმბოლოები</option>
-          <option value="3">ეტაპი 6: ჩემი წერილი / პროექტი</option>
+          <option value="2">ეტაპი 3: ტექსტები</option>
+          <option value="3">ეტაპი 4: გამოტოვებული ასო</option>
+          <option value="4">ეტაპი 5: ხმოვანი კარნახი</option>
+          <option value="5">ეტაპი 6: ციფრები და სიმბოლოები</option>
+          <option value="6">ეტაპი 7: ჩემი წერილი / პროექტი</option>
         </select>
+        
+        <!-- გასწორდა: რადგან 7 ეტაპია, ლოგიკურია იყოს 1/7 და არა 1/3 -->
+        <div id="taskProgress" style="display: none; background: #2196f3; color: white; padding: 5px 15px; border-radius: 15px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          დავალება 1/7
+        </div>
+        
+        <!-- გასწორდა: ამოღებულია ინგლისური მინაწერები -->
         <select id="categorySelect" style="display: none;">
-          <option value="mixed">შერეული (Mixed)</option>
-          <option value="animals">ცხოველები (Animals)</option>
-          <option value="colors">ფერები (Colors)</option>
-          <option value="school">სასკოლო (School)</option>
+          <option value="mixed">შერეული</option>
+          <option value="animals">ცხოველები</option>
+          <option value="colors">ფერები</option>
+          <option value="school">სასკოლო</option>
         </select>
+        
         <button id="theoryBtn">📖 თეორია და ინსტრუქცია</button>
         <button id="restartBtn">თავიდან დაწყება</button>
       </div>
-    </header>
+    </header> <!-- გასწორდა: header აქ იხურება ერთხელ და საბოლოოდ -->
     
     <div class="stats">
-      <div class="stat-box">დრო / Time:<br><span class="stat-val"><span id="timeLeft">60</span> წმ</span></div>
-      <div class="stat-box">სიზუსტე / Acc:<br><span class="stat-val"><span id="accuracy">100</span>%</span></div>
-      <div class="stat-box">სიჩქარე / WPM:<br><span class="stat-val"><span id="wpm">0</span></span></div>
-      <div class="stat-box">ქულა / Score:<br><span class="stat-val"><span id="score">0</span></span></div>
-      
+      <!-- გასწორდა: სტატისტიკის ველებშიც ამოვიღე ზედმეტი ინგლისური სიტყვები, რადგან ენის გადამრთველი უკვე გვაქვს -->
+      <div class="stat-box">დრო:<br><span class="stat-val"><span id="timeLeft">60</span> წმ</span></div>
+      <div class="stat-box">სიზუსტე:<br><span class="stat-val"><span id="accuracy">100</span>%</span></div>
+      <div class="stat-box">სიჩქარე:<br><span class="stat-val"><span id="wpm">0</span> WPM</span></div>
+      <div class="stat-box">ქულა:<br><span class="stat-val"><span id="score">0</span></span></div>
+    </div>
+    
+    <div id="actionZone" class="action-zone">
       <div id="gigaContainer" class="giga-container">
         <div id="gigaTooltip" class="giga-tooltip">არ დაგავიწყდეს Shift!</div>
         <img src="ant.png" alt="რობოტი გიგა" class="giga-image" />
         <div id="starsContainer"></div>
       </div>
+      <div id="stageInstruction" class="instruction-box"></div>
     </div>
     
     <button id="dictationBtn" style="display:none; font-size: 20px; padding: 10px 20px; margin: 10px auto; border-radius: 8px; cursor: pointer; background: var(--primary-color); color: white; border: none;">🔊 მოსმენა (Listen)</button>
@@ -57,31 +74,38 @@
     
     <div class="free-typing" id="freeTypingContainer" style="display: none;">
       <textarea id="freeTypingArea" placeholder="დაიწყე ბეჭდვა აქ... ჩაწერე შენი მოთხრობა, ლექსი ან მილოცვა!"></textarea>
-      <button id="downloadBtn">შენახვა / გადმოწერა</button>
+      <div class="free-typing-buttons">
+        <button id="downloadBtn">შენახვა / გადმოწერა</button>
+        <button id="checkProjectBtn" class="check-btn">✓ პროექტის შემოწმება</button>
+      </div>
     </div>
     
-    <div class="keyboard" id="keyboard"></div>
-    
-    <div class="hands-container">
+    <div class="keyboard-area">
       <!-- Left Hand -->
-      <svg class="hand left-hand" viewBox="0 0 120 150">
-        <rect id="finger-lp" class="finger lp" x="15" y="45" width="16" height="45" rx="8" />
-        <rect id="finger-lr" class="finger lr" x="35" y="25" width="16" height="65" rx="8" />
-        <rect id="finger-lm" class="finger lm" x="55" y="15" width="16" height="75" rx="8" />
-        <rect id="finger-li" class="finger li" x="75" y="25" width="16" height="65" rx="8" />
-        <rect id="finger-l-thumb" class="finger thumb" x="85" y="70" width="16" height="45" rx="8" transform="rotate(35 93 110)" />
-        <path class="palm" d="M15,80 L85,80 L95,120 Q90,140 55,140 Q15,140 15,80 Z" />
-      </svg>
-      
+      <div class="hand-side left-hand-side">
+        <svg class="hand left-hand" viewBox="0 0 120 150">
+          <rect id="finger-lp" class="finger lp" x="15" y="45" width="16" height="45" rx="8" />
+          <rect id="finger-lr" class="finger lr" x="35" y="25" width="16" height="65" rx="8" />
+          <rect id="finger-lm" class="finger lm" x="55" y="15" width="16" height="75" rx="8" />
+          <rect id="finger-li" class="finger li" x="75" y="25" width="16" height="65" rx="8" />
+          <rect id="finger-l-thumb" class="finger thumb" x="85" y="70" width="16" height="45" rx="8" transform="rotate(35 93 110)" />
+          <path class="palm" d="M15,80 L85,80 L95,120 Q90,140 55,140 Q15,140 15,80 Z" />
+        </svg>
+      </div>
+
+      <div class="keyboard" id="keyboard"></div>
+
       <!-- Right Hand -->
-      <svg class="hand right-hand" viewBox="0 0 120 150">
-        <rect id="finger-r-thumb" class="finger thumb" x="19" y="70" width="16" height="45" rx="8" transform="rotate(-35 27 110)" />
-        <rect id="finger-ri" class="finger ri" x="29" y="25" width="16" height="65" rx="8" />
-        <rect id="finger-rm" class="finger rm" x="49" y="15" width="16" height="75" rx="8" />
-        <rect id="finger-rr" class="finger rr" x="69" y="25" width="16" height="65" rx="8" />
-        <rect id="finger-rp" class="finger rp" x="89" y="45" width="16" height="45" rx="8" />
-        <path class="palm" d="M105,80 L35,80 L25,120 Q30,140 65,140 Q105,140 105,80 Z" />
-      </svg>
+      <div class="hand-side right-hand-side">
+        <svg class="hand right-hand" viewBox="0 0 120 150">
+          <rect id="finger-r-thumb" class="finger thumb" x="19" y="70" width="16" height="45" rx="8" transform="rotate(-35 27 110)" />
+          <rect id="finger-ri" class="finger ri" x="29" y="25" width="16" height="65" rx="8" />
+          <rect id="finger-rm" class="finger rm" x="49" y="15" width="16" height="75" rx="8" />
+          <rect id="finger-rr" class="finger rr" x="69" y="25" width="16" height="65" rx="8" />
+          <rect id="finger-rp" class="finger rp" x="89" y="45" width="16" height="45" rx="8" />
+          <path class="palm" d="M105,80 L35,80 L25,120 Q30,140 65,140 Q105,140 105,80 Z" />
+        </svg>
+      </div>
     </div>
   </div>
 
@@ -113,10 +137,80 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal">
+      <button class="close-btn" id="closeProjectBtn">✖</button>
+      <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+        <img src="ant.png" alt="რობოტი გიგა" style="width: 80px; height: 80px; margin-right: 15px;">
+        <h2 id="projectModalTitle" style="margin: 0; font-size: 22px;">პროექტის შემოწმება</h2>
+      </div>
+      
+      <ul class="criteria-list">
+        <li>
+          <span id="critLengthIcon" class="crit-icon">✖</span>
+          <span>მინიმუმ 40 სიმბოლო</span>
+        </li>
+        <li>
+          <span id="critPunctIcon" class="crit-icon">✖</span>
+          <span>გამოყენებულია სასვენი ნიშანი (., !, ?)</span>
+        </li>
+        <li>
+          <span id="critShiftIcon" class="crit-icon">✖</span>
+          <span>გამოყენებულია დიდი/Shift ასოები</span>
+        </li>
+      </ul>
+      
+      <p id="projectModalMessage" style="font-weight: bold; font-size: 18px; margin-top: 15px;"></p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="nextStageModal">
+    <div class="modal" style="text-align: center; max-width: 400px;">
+      <img src="ant.png" alt="რობოტი გიგა" style="width: 100px; height: 100px; margin-bottom: 10px; animation: bounce 1s infinite;">
+      <h2 style="color: #4caf50; font-size: 24px; margin: 10px 0;">ყოჩაღ! შენ ეს ეტაპი დაძლიე!</h2>
+      <p style="font-size: 16px;">მზად ხარ შემდეგი გამოწვევისთვის?</p>
+      <button id="autoNextStageBtn" class="check-btn" style="width: 100%; margin-top: 15px;">შემდეგი ეტაპი 🚀</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay show" id="registrationModal">
+    <div class="modal" style="max-width: 400px;">
+      <h2>კეთილი იყოს შენი მობრძანება!</h2>
+      <p>გთხოვ, შეიყვანო შენი მონაცემები თამაშის დასაწყებად:</p>
+      <input type="text" id="studentName" placeholder="სახელი, გვარი" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;">
+      <input type="text" id="studentGrade" placeholder="კლასი (მაგ. მე-3 კლასი)" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;">
+      <button id="startAppBtn" class="check-btn" style="width: 100%;">🚀 დაწყება</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="leaderboardModal">
+    <div class="modal" style="max-width: 600px;">
+      <button class="close-btn" id="closeLeaderboardBtn">✖</button>
+      <h2>🏆 Top 10 ოსტატი</h2>
+      <div id="leaderboardLoading">იტვირთება მონაცემები...</div>
+      <table class="leaderboard-table" id="leaderboardTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>სახელი</th>
+            <th>კლასი</th>
+            <th>WPM</th>
+            <th>სიზუსტე</th>
+            <th>თარიღი</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <footer class="app-footer">
     <p>© 2026 ზიკა დვალიშვილი</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="words.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

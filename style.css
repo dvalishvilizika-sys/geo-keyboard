@@ -22,6 +22,7 @@ body {
   justify-content: center;
   align-items: center;
   color: #333;
+  transition: background-color 0.8s ease, color 0.8s ease;
 }
 
 .container {
@@ -924,4 +925,101 @@ body.level-4 .giga-image {
 
 .leaderboard-table tr:hover {
   background-color: #f9f9f9;
+}
+
+body.hacker-mode {
+  background-color: #1a1a1a;
+}
+body.hacker-mode h1, 
+body.hacker-mode .stats div {
+  color: #4caf50;
+}
+body.hacker-mode #textDisplay {
+  background-color: #000000;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+body.hacker-mode .instruction-box {
+  background-color: #2d2d2d;
+  color: #00ff00;
+  border: 1px solid #4caf50;
+}
+
+/* =========================================
+   მობილური ვერსიის სტილები (სმარტფონები 768px-მდე)
+   ========================================= */
+@media screen and (max-width: 768px) {
+  /* კონტროლის პანელი (ჩამოსაშლელი მენიუები) */
+  .controls, .header-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .controls select, .controls button {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  /* სტატისტიკის ბლოკები ორ რიგად რომ არ ჩაიკარგოს */
+  .stats {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .stats div {
+    flex: 1 1 45%; /* თითო ბლოკმა ეკრანის თითქმის ნახევარი დაიკავოს */
+    font-size: 14px;
+    padding: 8px;
+  }
+  .stats div span {
+    font-size: 18px; /* ციფრების ზომის შემცირება */
+  }
+
+  /* რობოტი გიგა და ინსტრუქციის არეალი */
+  .action-zone {
+    height: auto;
+    min-height: 120px;
+    flex-direction: column;
+    margin: 10px 0;
+  }
+  .giga-image {
+    width: 60px; /* რობოტი ტელეფონში უფრო პატარა უნდა იყოს */
+  }
+  .instruction-box {
+    width: 95%;
+    font-size: 14px;
+    padding: 10px;
+    margin-top: 40px; /* გიგასთვის ადგილის დასატოვებლად */
+  }
+
+  /* ასაკრეფი ტექსტის ველი */
+  #textDisplay {
+    font-size: 22px; /* ტექსტის დაპატარავება მობილურისთვის */
+    padding: 15px 10px;
+    min-height: 80px;
+    word-wrap: break-word; /* გრძელი სიტყვები რომ არ გასცდეს ეკრანს */
+  }
+
+  /* მოდალური ფანჯრები (ეტაპის გადასვლა, ფინალი) */
+  .modal-content {
+    width: 95%;
+    margin: 15% auto;
+    padding: 15px;
+  }
+  .modal-body h2 { font-size: 20px; }
+  .modal-body p { font-size: 14px; }
+  .bounce-giga { width: 70px !important; }
+
+  /* ვირტუალური კლავიატურა (თუ ეკრანზეა) */
+  .keyboard-row {
+    gap: 2px;
+  }
+  .key {
+    padding: 10px 4px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
 }

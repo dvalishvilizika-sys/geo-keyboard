@@ -180,6 +180,12 @@ function generateText(lang, levelIndex) {
     targetArray = gameData.dictation;
   } else if (levelIndex === 5) {
     targetArray = gameData.symbols;
+  } else if (levelIndex === 7) {
+    targetArray = gameData.pythonText;
+  } else if (levelIndex === 8) {
+    targetArray = gameData.pythonMath;
+  } else if (levelIndex === 9) {
+    targetArray = gameData.pythonMicrobit;
   } else {
     targetArray = gameData.words.school;
   }
@@ -197,6 +203,8 @@ function generateText(lang, levelIndex) {
     elementsToPick = 15; // ეტაპი 6 (სიმბოლოები)
   } else if (levelIndex === 2) {
     elementsToPick = 2; // ეტაპი 3 (წინადადებები)
+  } else if (levelIndex >= 7) {
+    elementsToPick = 1; // Python და Micro:bit ეტაპები
   }
 
   let maxAttempts = 10;
@@ -510,6 +518,15 @@ function moveGiga() {
       case 6:
         instructionText = "📖 ფინალური პროექტი! თავისუფლად დაწერე ტექსტი, დაიცავი წესები და შეამოწმე შენი ცოდნა.";
         break;
+      case 7:
+        instructionText = "📖 პითონში print ნიშნავს 'დაბეჭდეს'. რაც ფრჩხილებში და ბრჭყალებში წერია, კომპიუტერი ზუსტად იმას გვეტყვის!";
+        break;
+      case 8:
+        instructionText = "📖 პითონმა კარგად იცის მათემატიკა! თუ ციფრებს ბრჭყალების გარეშე დავწერთ, ის თავად გამოიცნობს პასუხს.";
+        break;
+      case 9:
+        instructionText = "📖 მოდი დავანთოთ ნათურები Micro:bit-ზე! დააკვირდი წერტილებს და დიდი/პატარა ასოებს სინტაქსში.";
+        break;
     }
     stageInstruction.innerText = instructionText;
     stageInstruction.style.opacity = '1';
@@ -518,6 +535,13 @@ function moveGiga() {
 
 function startLevel() {
   currentLevel = parseInt(document.getElementById('levelSelect').value);
+  
+  if (currentLevel >= 7) {
+    document.body.classList.add('hacker-mode');
+  } else {
+    document.body.classList.remove('hacker-mode');
+  }
+  
   moveGiga();
   if (currentLevel === 4 || currentLevel === 5) {
     document.getElementById('langSelect').value = 'en';

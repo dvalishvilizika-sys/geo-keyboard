@@ -15,5 +15,23 @@ const gameData = {
   ],
   missingLetters: ["მ_ნქანა", "კ_მპიუტერი", "თ_თი", "რ_ბოტი", "მ_სწავლ_ბელი", "ს_ოლა", "წ_გნი", "პ_ოგ_ამა"],
   dictation: ["tree", "sun", "sky", "mom", "dad", "board", "door", "water", "ball", "cat", "mouse"],
-  symbols: ["12+34=46", "#tag", "@email", "Number5", "5*6=30", "HI!", "67-42=25", "100%", "60$", "A+B=C", "(10)", "Hello!"]
+  symbols: ["12+34=46", "#tag", "@email", "Number5", "5*6=30", "HI!", "67-42=25", "100%", "60$", "A+B=C", "(10)", "Hello!"],
+  pythonText: [
+    'print("გამარჯობა")', 
+    'print("მე ვარ გიგა")', 
+    'print("Python")', 
+    'print("ინოვაციების სკოლა")'
+  ],
+  pythonMath: [
+    'print(5 + 3)', 
+    'print(10 - 4)', 
+    'print(2 * 5)', 
+    'print(100 / 2)'
+  ],
+  pythonMicrobit: [
+    'display.show(Image.HEART)', 
+    'display.show(Image.HAPPY)', 
+    'display.clear()', 
+    'display.scroll("Hello")'
+  ]
 };

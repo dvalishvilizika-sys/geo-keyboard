@@ -1147,3 +1147,14 @@ window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
   console.log('აპლიკაცია წარმატებით დაინსტალირდა!');
 });
+
+// ვცდილობთ ეკრანის ავტომატურ ჰორიზონტალურად გაშლას (თუ ბრაუზერი დათანხმდება)
+function lockLandscape() {
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {
+// ზოგიერთი მობილური ბრაუზერი უსაფრთხოების გამო ამას ბლოკავს, ამიტომ გაფრთხილება გვაზღვევს
+
+});
+}
+}
+window.addEventListener('load', lockLandscape);

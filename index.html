@@ -53,7 +53,7 @@
     
     <div class="stats">
       <!-- გასწორდა: სტატისტიკის ველებშიც ამოვიღე ზედმეტი ინგლისური სიტყვები, რადგან ენის გადამრთველი უკვე გვაქვს -->
-      <div class="stat-box">დრო:<br><span class="stat-val"><span id="timeLeft">60</span> წმ</span></div>
+      <div class="stat-box">დრო:<br><span class="stat-val"><span id="timeLeft">0</span> წმ</span></div>
       <div class="stat-box">სიზუსტე:<br><span class="stat-val"><span id="accuracy">100</span>%</span></div>
       <div class="stat-box">სიჩქარე:<br><span class="stat-val"><span id="wpm">0</span> WPM</span></div>
       <div class="stat-box">ქულა:<br><span class="stat-val"><span id="score">0</span></span></div>
@@ -164,14 +164,27 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="nextStageModal">
-    <div class="modal" style="text-align: center; max-width: 400px;">
-      <img src="ant.png" alt="რობოტი გიგა" style="width: 100px; height: 100px; margin-bottom: 10px; animation: bounce 1s infinite;">
-      <h2 style="color: #4caf50; font-size: 24px; margin: 10px 0;">ყოჩაღ! შენ ეს ეტაპი დაძლიე!</h2>
-      <p style="font-size: 16px;">მზად ხარ შემდეგი გამოწვევისთვის?</p>
-      <button id="autoNextStageBtn" class="check-btn" style="width: 100%; margin-top: 15px;">შემდეგი ეტაპი 🚀</button>
+
+  <!-- ეტაპის გადასვლის მოდალი -->
+  <div class="modal-overlay" id="levelUpModal">
+    <div class="modal" style="max-width: 400px; text-align: center; padding: 40px 30px;">
+      <img src="ant.png" alt="გიგა" class="bounce-giga" style="width: 100px; margin-bottom: 15px;">
+      <h2 style="color: #1982C4; margin: 0 0 10px;">ეტაპი დასრულებულია! 🎉</h2>
+      <p style="color: #555; font-size: 16px; margin-bottom: 25px;">შენ წარმატებით გადახვედი შემდეგ დონეზე. განაგრძე ვარჯიში!</p>
+      <button id="levelUpNextBtn" style="background: #ff9800; color: white; border: none; font-size: 18px; font-weight: bold; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-family: inherit; transition: transform 0.1s;">შემდეგი ეტაპი 🚀</button>
     </div>
   </div>
+
+  <!-- ყველა ეტაპის დასრულების მოდალი -->
+  <div class="modal-overlay" id="allDoneModal">
+    <div class="modal" style="max-width: 420px; text-align: center; padding: 40px 30px;">
+      <img src="ant.png" alt="გიგა" class="bounce-giga" style="width: 110px; margin-bottom: 15px;">
+      <h2 style="color: #4CAF50; margin: 0 0 10px;">გილოცავ! 🏆</h2>
+      <p style="color: #555; font-size: 16px; margin-bottom: 25px;">შენ გაიარე ყველა ეტაპი და გახდი კლავიატურის ოსტატი!</p>
+      <button id="allDoneCloseBtn" style="background: #4CAF50; color: white; border: none; font-size: 18px; font-weight: bold; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-family: inherit; transition: transform 0.1s;">✨ ვარ ოსტატი!</button>
+    </div>
+  </div>
+
 
   <div class="modal-overlay show" id="registrationModal">
     <div class="modal" style="max-width: 400px;">

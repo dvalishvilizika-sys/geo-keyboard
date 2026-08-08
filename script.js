@@ -126,8 +126,7 @@ let studentName = '';
 let studentGrade = '';
 let userSessionResults = [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzANXGEqYAz6ZFV5qwaVF8AbjA7-SEknW0DKwRbskXIa_Aa2gqP7UtMKzjgRNx0tY2pkw/exec';
-let timeLeftValue = 60;
-let isTimeUp = false;
+let timeElapsed = 0;
 let dictationWordsCount = 0;
 let audioCtx = null;
 
@@ -387,27 +386,13 @@ function updateStats() {
   const now = new Date();
   
   if (startTime && currentLevel !== 6) {
-    const elapsedSeconds = Math.floor((now - startTime) / 1000);
-    timeLeftValue = 60 - elapsedSeconds;
-    
-    if (timeLeftValue <= 0) {
-      timeLeftValue = 0;
-      document.getElementById('timeLeft').innerText = 0;
-      clearInterval(timerInterval);
-      if (!isTimeUp) {
-        isTimeUp = true;
-        showModal(true);
-      }
-    } else {
-      document.getElementById('timeLeft').innerText = timeLeftValue;
-    }
+    timeElapsed = Math.floor((now - startTime) / 1000);
+    document.getElementById('timeLeft').innerText = timeElapsed;
   } else {
-    document.getElementById('timeLeft').innerText = 60;
+    document.getElementById('timeLeft').innerText = 0;
   }
   
-  let timeDiff = startTime ? (now - startTime) / 1000 / 60 : 0.01;
-  if (timeLeftValue <= 0 && startTime) timeDiff = 1.0;
-  if (timeDiff === 0) timeDiff = 0.01;
+  const timeDiff = startTime ? Math.max((now - startTime) / 1000 / 60, 0.01) : 0.01;
   
   const wordsTyped = totalTyped / 5;
   const wpm = Math.round(wordsTyped / timeDiff);
@@ -578,11 +563,10 @@ function startLevel() {
   errors = 0;
   totalTyped = 0;
   currentIndex = 0;
-  timeLeftValue = 60;
-  isTimeUp = false;
+  timeElapsed = 0;
   dictationWordsCount = 0;
   currentTaskCount = 1;
-  document.getElementById('timeLeft').innerText = '60';
+  document.getElementById('timeLeft').innerText = '0';
 
   if (currentLevel !== 6) {
     targetText = generateText(currentLang, currentLevel);
@@ -648,7 +632,6 @@ function startLevel() {
 }
 
 document.addEventListener('keydown', (e) => {
-  if (isTimeUp) return;
   
   if (e.key === 'Escape') {
     document.getElementById('theoryModal').classList.remove('show');
@@ -742,21 +725,22 @@ document.addEventListener('keydown', (e) => {
         const maxIdx = levelSelect.options.length - 1;
         
         if (currentIdx < maxIdx) {
-          alert("ყოჩაღ! შენ გადახვედი შემდეგ ეტაპზე.");
-          levelSelect.selectedIndex = currentIdx + 1;
-          startLevel();
+          // შემდეგ ეტაპზე გადასვლა — ლამაზი მოდალი alert()-ის ნაცვლად
+          pendingNextLevel = currentIdx + 1;
+          document.getElementById('levelUpModal').classList.add('show');
+          triggerStars();
         } else {
-          alert("გილოცავ! შენ გაიარე ყველა ეტაპი და გახდი კლავიატურის ოსტატი!");
-          startLevel();
+          // ყველა ეტაპი დასრულდა
+          document.getElementById('allDoneModal').classList.add('show');
+          triggerFireworks();
         }
       } else {
         // Reset sub-task state (timer pauses until first keypress)
         clearInterval(timerInterval);
         isGameStarted = false;
         startTime = null;
-        timeLeftValue = 60;
-        isTimeUp = false;
-        document.getElementById('timeLeft').innerText = '60';
+        timeElapsed = 0;
+        document.getElementById('timeLeft').innerText = '0';
 
         // Load next text for same level
         targetText = generateText(currentLang, currentLevel);
@@ -1055,6 +1039,17 @@ if (closeLeaderboardBtn) {
 // Do NOT call renderKeyboard() or startLevel() here.
 // They are called inside startAppBtn handler AFTER registration.
 
+function triggerStars() {
+  confetti({
+    particleCount: 30,
+    spread: 60,
+    origin: { y: 0.6 },
+    colors: ['#FFD700', '#FFA500', '#FFF8DC'],
+    shapes: ['star'],
+    ticks: 50
+  });
+}
+
 function triggerFireworks() {
   var duration = 3 * 1000;
   var end = Date.now() + duration;
@@ -1063,4 +1058,28 @@ function triggerFireworks() {
     confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, zIndex: 9999, colors: ['#ff0000', '#00ff00', '#0000ff', '#ffeb3b', '#ff9800'] });
     if (Date.now() < end) { requestAnimationFrame(frame); }
   }());
+}
+
+// ეტაპის გადასვლის მოდალის ღილაკი
+let pendingNextLevel = -1;
+const levelUpNextBtn = document.getElementById('levelUpNextBtn');
+if (levelUpNextBtn) {
+  levelUpNextBtn.addEventListener('click', () => {
+    document.getElementById('levelUpModal').classList.remove('show');
+    if (pendingNextLevel >= 0) {
+      const levelSelect = document.getElementById('levelSelect');
+      levelSelect.selectedIndex = pendingNextLevel;
+      pendingNextLevel = -1;
+      startLevel();
+    }
+  });
+}
+
+// ყველა ეტაპის დასრულების მოდალის ღილაკი
+const allDoneCloseBtn = document.getElementById('allDoneCloseBtn');
+if (allDoneCloseBtn) {
+  allDoneCloseBtn.addEventListener('click', () => {
+    document.getElementById('allDoneModal').classList.remove('show');
+    startLevel();
+  });
 }

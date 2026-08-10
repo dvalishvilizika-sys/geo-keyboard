@@ -118,6 +118,7 @@ const levels = {
 let currentLang = 'ka';
 let currentLevel = 0;
 let targetText = '';
+let currentExamQuestion = null;
 let currentIndex = 0;
 let errors = 0;
 let totalTyped = 0;
@@ -181,6 +182,24 @@ function shuffleArray(array) {
   return array;
 }
 
+function shuffleWithoutConsecutiveDuplicates(arr) {
+  let shuffled;
+  let hasConsecutive = true;
+  
+  while (hasConsecutive) {
+    shuffled = [...arr].sort(() => Math.random() - 0.5);
+    hasConsecutive = false;
+    
+    for (let i = 0; i < shuffled.length - 1; i++) {
+      if (shuffled[i] === shuffled[i + 1]) {
+        hasConsecutive = true;
+        break;
+      }
+    }
+  }
+  return shuffled;
+}
+
 function generateText(lang, levelIndex) {
   let targetArray = [];
   
@@ -238,13 +257,17 @@ function generateText(lang, levelIndex) {
       pool = [...targetArray]; // Only 1 copy for exam, no shuffle needed or optional
     } else {
       pool = [...targetArray, ...targetArray];
-      pool = shuffleArray(pool);
+      pool = shuffleWithoutConsecutiveDuplicates(pool);
     }
     
     levelQueue = [];
     while (pool.length > 0) {
       let group = pool.splice(0, elementsToPick);
-      levelQueue.push(group.join(" "));
+      if (levelIndex === 12) {
+        levelQueue.push(group[0]);
+      } else {
+        levelQueue.push(group.join(" "));
+      }
     }
   }
 
@@ -252,6 +275,11 @@ function generateText(lang, levelIndex) {
     newTask = levelQueue[currentTaskCount - 1];
   } else {
     newTask = levelQueue[0] || targetArray[0];
+  }
+
+  if (levelIndex === 12) {
+    currentExamQuestion = newTask;
+    newTask = newTask.q;
   }
 
   lastTaskContent = newTask;
@@ -1099,7 +1127,8 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
         name: studentName,
         grade: studentGrade,
         question: targetText,
-        answer: text
+        answer: text,
+        correctAnswer: currentExamQuestion ? currentExamQuestion.correct : ''
       })
     }).then(() => {
       document.getElementById('freeTypingArea').value = '';

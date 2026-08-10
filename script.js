@@ -58,7 +58,12 @@ const keyboardLayout = [
    {code: 'Slash', en: '/', enShift: '?', ka: '/', kaShift: '?', finger: 'rp'},
    {code: 'ShiftRight', display: 'Shift', width: 'wide-2-5', finger: 'rp'}],
   // Row 5
-  [{code: 'Space', display: 'Space', en: ' ', ka: ' ', width: 'spacebar', finger: 'thumb'}]
+  [{code: 'ControlLeft', display: 'Ctrl', width: 'wide-1-5', finger: 'lp'},
+   {code: 'MetaLeft', display: 'Win', width: 'wide-1', finger: 'thumb'},
+   {code: 'AltLeft', display: 'Alt', width: 'wide-1', finger: 'thumb'},
+   {code: 'Space', display: 'Space', en: ' ', ka: ' ', width: 'spacebar', finger: 'thumb'},
+   {code: 'AltRight', display: 'Alt', width: 'wide-1', finger: 'thumb'},
+   {code: 'ControlRight', display: 'Ctrl', width: 'wide-1-5', finger: 'rp'}]
 ];
 
 const levels = {
@@ -120,7 +125,8 @@ let startTime = null;
 let timerInterval = null;
 let isGameStarted = false;
 let currentTaskCount = 1;
-const maxTasks = 3;
+let maxTasks = 3;
+let currentTargetArray = [];
 
 // --- LEADERBOARD & REGISTRATION ---
 let studentName = '';
@@ -165,6 +171,16 @@ function playSound(type) {
 
 let lastTaskContent = "";
 
+let levelQueue = [];
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 function generateText(lang, levelIndex) {
   let targetArray = [];
   
@@ -182,14 +198,22 @@ function generateText(lang, levelIndex) {
   } else if (levelIndex === 5) {
     targetArray = gameData.symbols;
   } else if (levelIndex === 7) {
-    targetArray = gameData.pythonText;
+    targetArray = (lang === 'en') ? gameData.pythonText : gameData.robotCommands;
   } else if (levelIndex === 8) {
-    targetArray = gameData.pythonMath;
+    targetArray = gameData.pythonCommands;
   } else if (levelIndex === 9) {
-    targetArray = gameData.pythonMicrobit;
+    targetArray = gameData.pythonVariables;
+  } else if (levelIndex === 10) {
+    targetArray = gameData.pythonLoops;
+  } else if (levelIndex === 11) {
+    targetArray = gameData.pythonConditions;
+  } else if (levelIndex === 12) {
+    targetArray = finalExamQuestions;
   } else {
     targetArray = gameData.words.school;
   }
+
+  currentTargetArray = targetArray;
 
   let newTask = "";
   let elementsToPick = 1; 
@@ -201,40 +225,85 @@ function generateText(lang, levelIndex) {
   } else if (levelIndex === 3) {
     elementsToPick = 6; // ეტაპი 4 (გამოტოვებული ასოები)
   } else if (levelIndex === 5) {
-    elementsToPick = 15; // ეტაპი 6 (სიმბოლოები)
+    elementsToPick = 5; // ეტაპი 6 (სიმბოლოები)
   } else if (levelIndex === 2) {
     elementsToPick = 2; // ეტაპი 3 (წინადადებები)
-  } else if (levelIndex >= 7) {
-    elementsToPick = 1; // Python და Micro:bit ეტაპები
+  } else if (levelIndex >= 7 && levelIndex <= 11) {
+    elementsToPick = 1; // ეტაპი 8 დან 12-მდე (რობოტის მართვა / Python)
   }
 
-  let maxAttempts = 10;
-  let attempts = 0;
-
-  do {
-    let tempArray = [];
-    let lastElement = "";
-    for (let i = 0; i < elementsToPick; i++) {
-      let randomElement;
-      let innerAttempts = 0;
-      do {
-        const randomIndex = Math.floor(Math.random() * targetArray.length);
-        randomElement = targetArray[randomIndex];
-        innerAttempts++;
-      } while (randomElement === lastElement && innerAttempts < 10 && targetArray.length > 1);
-      
-      tempArray.push(randomElement);
-      lastElement = randomElement;
+  if (currentTaskCount === 1) {
+    let pool;
+    if (levelIndex === 12) {
+      pool = [...targetArray]; // Only 1 copy for exam, no shuffle needed or optional
+    } else {
+      pool = [...targetArray, ...targetArray];
+      pool = shuffleArray(pool);
     }
-    newTask = tempArray.join(" "); // ვაერთებთ სიტყვებს/ასოებს გამოტოვებული სივრცით
-    attempts++;
-  } while (newTask === lastTaskContent && attempts < maxAttempts && targetArray.length > 1);
+    
+    levelQueue = [];
+    while (pool.length > 0) {
+      let group = pool.splice(0, elementsToPick);
+      levelQueue.push(group.join(" "));
+    }
+  }
+
+  if (currentTaskCount <= levelQueue.length) {
+    newTask = levelQueue[currentTaskCount - 1];
+  } else {
+    newTask = levelQueue[0] || targetArray[0];
+  }
 
   lastTaskContent = newTask;
   return newTask;
 }
 
+function updateDynamicInstruction() {
+  if (currentLevel >= 8 && typeof codeExplanations !== 'undefined' && codeExplanations[targetText]) {
+    const instructionBox = document.getElementById('stageInstruction');
+    if (instructionBox) {
+      instructionBox.innerHTML = codeExplanations[targetText];
+      instructionBox.style.animation = 'none';
+      setTimeout(() => instructionBox.style.animation = 'pulse 0.5s ease', 10);
+    }
+  } else {
+    const instructionBox = document.getElementById('stageInstruction');
+    if (instructionBox && instructionBox.dataset.originalText && currentLevel >= 8) {
+      instructionBox.innerHTML = instructionBox.dataset.originalText;
+    }
+  }
+}
+
 let virtualShift = false;
+let virtualCtrl = false;
+let virtualAlt = false;
+
+function toggleLanguage() {
+  const langSelect = document.getElementById('langSelect');
+  if (!langSelect) return;
+  langSelect.value = (langSelect.value === 'ka') ? 'en' : 'ka';
+  currentLang = langSelect.value;
+  document.body.setAttribute('data-lang', currentLang);
+  
+  renderKeyboard();
+  if (targetText && currentIndex < targetText.length) {
+    highlightNextKey();
+  }
+}
+
+function checkVirtualLanguageToggle() {
+  if ((virtualCtrl && virtualAlt) || (virtualShift && virtualAlt) || (virtualCtrl && virtualShift)) {
+    toggleLanguage();
+    virtualCtrl = false;
+    virtualAlt = false;
+    virtualShift = false;
+    document.querySelectorAll('.key.active').forEach(el => {
+      if (['ControlLeft', 'ControlRight', 'AltLeft', 'AltRight', 'ShiftLeft', 'ShiftRight'].includes(el.id)) {
+        el.classList.remove('active');
+      }
+    });
+  }
+}
 
 function handleVirtualKeyClick(e) {
   const keyEl = e.target.closest('.key');
@@ -244,8 +313,23 @@ function handleVirtualKeyClick(e) {
   
   if (code === 'ShiftLeft' || code === 'ShiftRight') {
     virtualShift = !virtualShift;
-    document.getElementById('ShiftLeft').classList.toggle('active', virtualShift);
-    document.getElementById('ShiftRight').classList.toggle('active', virtualShift);
+    document.getElementById('ShiftLeft')?.classList.toggle('active', virtualShift);
+    document.getElementById('ShiftRight')?.classList.toggle('active', virtualShift);
+    checkVirtualLanguageToggle();
+    return;
+  }
+  if (code === 'ControlLeft' || code === 'ControlRight') {
+    virtualCtrl = !virtualCtrl;
+    document.getElementById('ControlLeft')?.classList.toggle('active', virtualCtrl);
+    document.getElementById('ControlRight')?.classList.toggle('active', virtualCtrl);
+    checkVirtualLanguageToggle();
+    return;
+  }
+  if (code === 'AltLeft' || code === 'AltRight') {
+    virtualAlt = !virtualAlt;
+    document.getElementById('AltLeft')?.classList.toggle('active', virtualAlt);
+    document.getElementById('AltRight')?.classList.toggle('active', virtualAlt);
+    checkVirtualLanguageToggle();
     return;
   }
   
@@ -262,10 +346,8 @@ function handleVirtualKeyClick(e) {
   
   if (virtualShift) {
     virtualShift = false;
-    const sl = document.getElementById('ShiftLeft');
-    const sr = document.getElementById('ShiftRight');
-    if(sl) sl.classList.remove('active');
-    if(sr) sr.classList.remove('active');
+    document.getElementById('ShiftLeft')?.classList.remove('active');
+    document.getElementById('ShiftRight')?.classList.remove('active');
   }
 }
 
@@ -285,9 +367,26 @@ function renderKeyboard() {
       if (key.display !== undefined) {
          keyEl.innerHTML = `<div class="main-char" style="font-size:1em;">${key.display}</div>`;
       } else {
-         let shiftHtml = key.kaShift ? `<div class="shift-char">⇧${key.kaShift}</div>` : '';
-         let mainHtml = `<div class="main-char">${key.ka || ''}</div>`;
-         let enHtml = `<div class="en-char">${key.en || ''}</div>`;
+         let shiftChar = '';
+         if (currentLang === 'ka' && key.kaShift) {
+             shiftChar = key.kaShift;
+         } else if (currentLang === 'en' && key.enShift && !/^[A-Z]$/.test(key.enShift)) {
+             shiftChar = key.enShift;
+         } else if (currentLang === 'en' && key.kaShift && !/^[a-zA-Z]$/.test(key.kaShift)) {
+             shiftChar = key.kaShift;
+         }
+         
+         let shiftHtml = shiftChar ? `<div class="shift-char">⇧${shiftChar}</div>` : '';
+         let mainHtml = '';
+         let enHtml = '';
+         
+         if (currentLang === 'en') {
+             mainHtml = `<div class="main-char">${key.en || ''}</div>`;
+             enHtml = (key.ka && key.ka !== key.en) ? `<div class="en-char">${key.ka}</div>` : '';
+         } else {
+             mainHtml = `<div class="main-char">${key.ka || ''}</div>`;
+             enHtml = (key.en && key.en !== key.ka) ? `<div class="en-char">${key.en}</div>` : '';
+         }
          
          keyEl.innerHTML = shiftHtml + mainHtml + enHtml;
       }
@@ -319,18 +418,17 @@ function highlightNextKey() {
   
   for (let row of keyboardLayout) {
     for (let key of row) {
-      if (currentLang === 'ka') {
-        if (key.ka === char || key.kaShift === char || (key.en === char)) {
-          targetKey = key;
-          if (key.kaShift === char) needsShift = true;
-          break;
+      if (key.ka === char || key.kaShift === char || 
+          key.en === char || key.enShift === char || 
+          (key.en && key.en.toUpperCase() === char)) {
+          
+        targetKey = key;
+        
+        if (key.kaShift === char || key.enShift === char || 
+           (key.en && key.en.toUpperCase() === char && char.toUpperCase() !== char.toLowerCase())) {
+           needsShift = true;
         }
-      } else {
-        if (key.en === char || key.enShift === char || (key.en && key.en.toUpperCase() === char)) {
-          targetKey = key;
-          if (key.enShift === char || (key.en && key.en.toUpperCase() === char && char.toUpperCase() !== char.toLowerCase())) needsShift = true;
-          break;
-        }
+        break;
       }
     }
     if (targetKey) break;
@@ -487,10 +585,10 @@ function moveGiga() {
   gigaContainer.style.transform = 'none';
 
   if (gigaIsOnLeft) {
-    gigaContainer.style.left = '10%';
+    gigaContainer.style.left = '-60px';
     gigaImage.style.transform = 'scaleX(1)';
   } else {
-    gigaContainer.style.left = '80%';
+    gigaContainer.style.left = 'calc(100% - 140px)';
     gigaImage.style.transform = 'scaleX(-1)';
   }
 
@@ -520,16 +618,32 @@ function moveGiga() {
         instructionText = "📖 ფინალური პროექტი! თავისუფლად დაწერე ტექსტი, დაიცავი წესები და შეამოწმე შენი ცოდნა.";
         break;
       case 7:
-        instructionText = "📖 პითონში print ნიშნავს 'დაბეჭდეს'. რაც ფრჩხილებში და ბრჭყალებში წერია, კომპიუტერი ზუსტად იმას გვეტყვის!";
+        instructionText = "💻 ახლა შენ პროგრამისტი ხარ! მოდი, რობოტ გიგას ალგორითმი დავუწეროთ. ყურადღება მიაქციე ორწერტილს (:) და ტირეს (-).";
         break;
       case 8:
-        instructionText = "📖 პითონმა კარგად იცის მათემატიკა! თუ ციფრებს ბრჭყალების გარეშე დავწერთ, ის თავად გამოიცნობს პასუხს.";
+        instructionText = "🐍 ეტაპი 9: მართე გიგა პითონის ბრძანებებით! არ დაგავიწყდეს ფრჩხილები () ფუნქციის ბოლოს.";
         break;
       case 9:
-        instructionText = "📖 მოდი დავანთოთ ნათურები Micro:bit-ზე! დააკვირდი წერტილებს და დიდი/პატარა ასოებს სინტაქსში.";
+        instructionText = "🐍 ეტაპი 10: ვისწავლოთ ცვლადები! = ნიშნით კომპიუტერი იმახსოვრებს რიცხვებსა და სიტყვებს.";
+        break;
+      case 10:
+        instructionText = "🐍 ეტაპი 11: ციკლები! კოდი რომ არ ვწეროთ ბევრჯერ, ვიყენებთ for და while ბრძანებებს. ყურადღება მიაქციე ორწერტილს (:)";
+        break;
+      case 11:
+        instructionText = "🐍 ეტაპი 12: პირობები! if ნიშნავს 'თუ'. ასე რობოტი გადაწყვეტილებებს დამოუკიდებლად იღებს!";
         break;
     }
+
+    // Add language indicator
+    if ([4, 5, 8, 9, 10, 11].includes(currentLevel)) {
+      instructionText += "\n\n🇬🇧 გადართე ინგლისურ (EN) კლავიატურაზე.";
+    } else {
+      instructionText += "\n\n🇬🇪 გადართე ქართულ (GE) კლავიატურაზე.";
+    }
+
     stageInstruction.innerText = instructionText;
+    stageInstruction.dataset.originalText = instructionText;
+    stageInstruction.style.color = ""; // reset color in case it was warning
     stageInstruction.style.opacity = '1';
   }, 1000);
 }
@@ -550,6 +664,8 @@ function startLevel() {
   currentLang = document.getElementById('langSelect').value;
   document.body.setAttribute('data-lang', currentLang);
   
+  renderKeyboard();
+  
   if (currentLevel === 1 || currentLevel === 3 || currentLevel === 4) {
     document.getElementById('categorySelect').style.display = 'inline-block';
   } else {
@@ -564,20 +680,36 @@ function startLevel() {
     document.body.classList.remove('level-5');
   }
   
-  if (currentLevel === 6) {
-    document.getElementById('taskProgress').style.display = 'none';
+  if (currentLevel >= 7) {
+    document.body.classList.add('hacker-mode');
+  } else {
+    document.body.classList.remove('hacker-mode');
+  }
+  
+  if (currentLevel === 6 || currentLevel === 12) {
+    if (currentLevel === 6) {
+      document.getElementById('taskProgress').style.display = 'none';
+      document.getElementById('textDisplay').style.display = 'none';
+      document.getElementById('downloadBtn').innerText = 'შენახვა / გადმოწერა';
+      document.getElementById('checkProjectBtn').style.display = 'inline-block';
+      document.getElementById('freeTypingArea').placeholder = 'დაიწყე ბეჭდვა აქ... ჩაწერე შენი მოთხრობა, ლექსი ან მილოცვა!';
+    } else {
+      document.getElementById('taskProgress').style.display = 'inline-block';
+      document.getElementById('textDisplay').style.display = 'block';
+      document.getElementById('downloadBtn').innerText = 'პასუხის გაგზავნა';
+      document.getElementById('checkProjectBtn').style.display = 'none';
+      document.getElementById('freeTypingArea').placeholder = 'პასუხები ჩაწერე ამ ველში';
+    }
     document.body.classList.add('level-4');
-    document.getElementById('textDisplay').style.display = 'none';
     document.getElementById('freeTypingContainer').style.display = 'flex';
     document.getElementById('freeTypingArea').value = '';
     document.querySelectorAll('.key.highlight, .finger.active').forEach(el => {
       el.classList.remove('highlight', 'active');
     });
     document.getElementById('freeTypingArea').focus();
-    return;
+    if (currentLevel === 6) return;
   } else {
     document.getElementById('taskProgress').style.display = 'inline-block';
-    document.getElementById('taskProgress').innerText = `დავალება 1/${maxTasks}`;
     document.body.classList.remove('level-4');
     document.getElementById('textDisplay').style.display = 'block';
     document.getElementById('freeTypingContainer').style.display = 'none';
@@ -595,6 +727,12 @@ function startLevel() {
 
   if (currentLevel !== 6) {
     targetText = generateText(currentLang, currentLevel);
+    updateDynamicInstruction();
+    maxTasks = levelQueue.length;
+    const taskProgress = document.getElementById('taskProgress');
+    if (taskProgress && taskProgress.style.display !== 'none') {
+      taskProgress.innerText = `დავალება ${currentTaskCount}/${maxTasks}`;
+    }
   }
 
   updateStats();
@@ -636,10 +774,17 @@ function startLevel() {
     }
   } else if (currentLevel !== 3) {
     for (let i = 0; i < targetText.length; i++) {
+      if (targetText[i] === '\n') {
+        display.appendChild(document.createElement('br'));
+      }
+      
       const span = document.createElement('span');
       span.className = 'char';
       span.id = `char-${i}`;
       span.innerText = targetText[i];
+      if (targetText[i] === '\n') {
+        span.style.display = 'none'; // hide the actual \n char span so we still keep indices intact for typing if needed
+      }
       display.appendChild(span);
     }
     
@@ -671,10 +816,46 @@ document.addEventListener('keydown', (e) => {
   if (['Shift', 'CapsLock', 'Control', 'Alt', 'Meta'].includes(e.key)) {
     const el = document.getElementById(e.code);
     if(el) el.classList.add('active');
+    
+    if ((e.shiftKey && e.altKey) || (e.ctrlKey && e.altKey) || (e.ctrlKey && e.shiftKey)) {
+      if (!window.lastLangToggleTime || Date.now() - window.lastLangToggleTime > 500) {
+        toggleLanguage();
+        window.lastLangToggleTime = Date.now();
+      }
+    }
     return;
   }
+
+  // Dynamic Language Warning Check
+  if (currentLevel !== 6 && currentIndex < targetText.length) {
+    const expectedChar = targetText[currentIndex];
+    const expectedLang = (currentLevel === 5) ? 'en' : currentLang;
+    const typedChar = getTypedChar(e, expectedLang);
+    
+    if (typedChar !== expectedChar) {
+      const alternateLang = (currentLang === 'ka') ? 'en' : 'ka';
+      const typedCharAlt = getTypedChar(e, alternateLang);
+      
+      const isExpectedGeo = /[ა-ჰ]/.test(expectedChar);
+      const isExpectedEng = /[a-zA-Z]/.test(expectedChar);
+      
+      if (typedCharAlt === expectedChar || (isExpectedGeo && /[a-zA-Z]/.test(e.key)) || (isExpectedEng && /[ა-ჰ]/.test(e.key))) {
+        const stageInstruction = document.getElementById('stageInstruction');
+        const langName = isExpectedEng ? "ინგლისურ" : "ქართულ";
+        stageInstruction.innerText = `⚠️ ყურადღება: გთხოვ, გადართე ${langName} ენაზე (Alt + Shift ან აპლიკაციის კლავიატურაზე Ctrl+Alt)!`;
+        stageInstruction.style.color = "#ff9800";
+        if (window.langWarningTimeout) clearTimeout(window.langWarningTimeout);
+        window.langWarningTimeout = setTimeout(() => {
+           stageInstruction.innerText = stageInstruction.dataset.originalText || "";
+           stageInstruction.style.color = "";
+        }, 3000);
+        e.preventDefault();
+        return;
+      }
+    }
+  }
   
-  if (currentLevel === 6) {
+  if (currentLevel === 6 || currentLevel === 12) {
     const el = document.getElementById(e.code);
     if(el) el.classList.add('active');
     triggerGigaCorrect();
@@ -740,7 +921,7 @@ document.addEventListener('keydown', (e) => {
       // One task done
       currentTaskCount++;
       const progressEl = document.getElementById('taskProgress');
-      if (progressEl) progressEl.innerText = `დავალება ${currentTaskCount}/${maxTasks}`;
+      if (progressEl) progressEl.innerText = `დავალება ${currentTaskCount > maxTasks ? maxTasks : currentTaskCount}/${maxTasks}`;
 
       if (currentTaskCount > maxTasks) {
         // All tasks for this level completed — auto advance
@@ -769,6 +950,7 @@ document.addEventListener('keydown', (e) => {
 
         // Load next text for same level
         targetText = generateText(currentLang, currentLevel);
+        updateDynamicInstruction();
         currentIndex = 0;
 
         const display = document.getElementById('textDisplay');
@@ -905,11 +1087,62 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
     alert("გთხოვთ აკრიფოთ ტექსტი შენახვამდე.");
     return;
   }
-  const blob = new Blob([text], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'chemi_proeqti.txt';
-  a.click();
+  
+  const studentName = document.getElementById('studentName').value || 'Unknown';
+  const studentGrade = document.getElementById('studentGrade').value || 'Unknown';
+
+  if (currentLevel === 12) {
+    fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({
+        type: 'exam',
+        name: studentName,
+        grade: studentGrade,
+        question: targetText,
+        answer: text
+      })
+    }).then(() => {
+      document.getElementById('freeTypingArea').value = '';
+      alert('პასუხი გაგზავნილია! გააგრძელე შემდეგი კითხვით.');
+      
+      currentTaskCount++;
+      const taskProgress = document.getElementById('taskProgress');
+      if (taskProgress) taskProgress.innerText = `დავალება ${currentTaskCount > maxTasks ? maxTasks : currentTaskCount}/${maxTasks}`;
+
+      if (currentTaskCount > maxTasks) {
+        document.getElementById('allDoneModal').classList.add('show');
+        triggerFireworks();
+      } else {
+        targetText = generateText(currentLang, currentLevel);
+        const display = document.getElementById('textDisplay');
+        display.innerHTML = '';
+        for (let i = 0; i < targetText.length; i++) {
+          if (targetText[i] === '\n') {
+            display.appendChild(document.createElement('br'));
+          }
+          const span = document.createElement('span');
+          span.className = 'char';
+          span.id = `char-${i}`;
+          span.innerText = targetText[i];
+          if (targetText[i] === '\n') {
+            span.style.display = 'none';
+          }
+          display.appendChild(span);
+        }
+        document.getElementById('freeTypingArea').focus();
+      }
+    }).catch(e => alert("შეცდომა გაგზავნისას."));
+  } else {
+    fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({
+        type: 'project',
+        name: studentName,
+        grade: studentGrade,
+        projectText: text
+      })
+    }).then(() => alert('პროექტი გაიგზავნა მასწავლებელთან!')).catch(e => alert("შეცდომა გაგზავნისას."));
+  }
 });
 
 document.getElementById('closeProjectBtn').addEventListener('click', () => {
@@ -1100,12 +1333,22 @@ if (levelUpNextBtn) {
   });
 }
 
-// ყველა ეტაპის დასრულების მოდალის ღილაკი
-const allDoneCloseBtn = document.getElementById('allDoneCloseBtn');
-if (allDoneCloseBtn) {
-  allDoneCloseBtn.addEventListener('click', () => {
+// ღილაკი: მთავარ ეკრანზე დაბრუნება
+const returnHomeBtn = document.getElementById('returnHomeBtn');
+if (returnHomeBtn) {
+  returnHomeBtn.addEventListener('click', () => {
     document.getElementById('allDoneModal').classList.remove('show');
-    startLevel();
+    location.reload(); 
+  });
+}
+
+// ღილაკი: სტატისტიკის ნახვა
+const viewStatsBtn = document.getElementById('viewStatsBtn');
+if (viewStatsBtn) {
+  viewStatsBtn.addEventListener('click', () => {
+    document.getElementById('allDoneModal').classList.remove('show');
+    const top10Btn = document.getElementById('top10Btn');
+    if (top10Btn) top10Btn.click();
   });
 }
 

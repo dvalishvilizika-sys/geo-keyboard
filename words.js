@@ -33,5 +33,99 @@ const gameData = {
     'display.show(Image.HAPPY)', 
     'display.clear()', 
     'display.scroll("Hello")'
+  ],
+  robotCommands: [
+    'ნაბიჯი წინ',
+    'მობრუნდი მარცხნივ',
+    'აიღე გასაღები',
+    'თუ კედელია: გაჩერდი',
+    'გაიმეორე 3-ჯერ: იხტუნე',
+    'ჩართე სინათლე',
+    'დაასრულე მისია'
+  ],
+  
+  // ეტაპი 9: მარტივი ბრძანებები და ფუნქციები
+  pythonCommands: [
+    'step(5)', 'step(10)', 'turn("left")', 'turn("right")', 'turn("back")',
+    'jump()', 'grab("key")', 'drop()', 'say("Hello!")', 'wait(2)', 'hide()'
+  ],
+  
+  // ეტაპი 10: ცვლადები და მონაცემები
+  pythonVariables: [
+    'distance = 10', 'speed = 2', 'color = "blue"', 'score = score + 1',
+    'is_game_over = False', 'player_name = "Giga"', 'lives = 3',
+    'is_ready = True', 'x = 50', 'y = 100', 'total = x + y'
+  ],
+  
+  // ეტაპი 11: ციკლები (გამეორება)
+  pythonLoops: [
+    'for i in range(3):', 'for step in range(5):', 'for i in range(10):',
+    'while True:', 'while not wall_ahead:', 'while player_is_alive:',
+    'for coin in coins:', 'while distance > 0:', 'pass'
+  ],
+  
+  // ეტაპი 12: პირობები (ლოგიკა)
+  pythonConditions: [
+    'if path_is_clear:', 'if distance < 5:', 'if score >= 100:',
+    'if not is_game_over:', 'elif object == "enemy":',
+    'elif key_pressed == "space":', 'if x == 5 and y == 10:',
+    'else:', 'break'
   ]
 };
+
+const codeExplanations = {
+  // ბრძანებები
+  'step(5)': '🤖 step(5) : რობოტი გადადგამს 5 ნაბიჯს წინ.',
+  'step(10)': '🤖 step(10) : რობოტი გადადგამს 10 ნაბიჯს.',
+  'turn("left")': '🤖 turn("left") : მობრუნდი მარცხნივ.',
+  'turn("right")': '🤖 turn("right") : მობრუნდი მარჯვნივ.',
+  'turn("back")': '🤖 turn("back") : შემოტრიალდი უკან.',
+  'jump()': '🤖 jump() : რობოტი აიხტება მაღლა.',
+  'grab("key")': '🤖 grab("key") : აიღე გასაღები.',
+  'drop()': '🤖 drop() : დააგდე ნივთი ხელებიდან.',
+  'say("Hello!")': '🤖 say("Hello!") : რობოტი იტყვის გამარჯობას.',
+  'wait(2)': '🤖 wait(2) : დაიცადე 2 წამი.',
+  'hide()': '🤖 hide() : რობოტი დაიმალება.',
+  
+  // ცვლადები
+  'distance = 10': '🤖 distance = 10 : მანძილი არის 10.',
+  'speed = 2': '🤖 speed = 2 : სიჩქარე განვსაზღვრეთ როგორც 2.',
+  'color = "blue"': '🤖 color = "blue" : ფერი არის ლურჯი.',
+  'score = score + 1': '🤖 score = score + 1 : ქულას დაემატა 1.',
+  'is_game_over = False': '🤖 is_game_over = False : თამაში არ დასრულებულა.',
+  'player_name = "Giga"': '🤖 player_name = "Giga" : მოთამაშის სახელია გიგა.',
+  'lives = 3': '🤖 lives = 3 : რობოტს აქვს 3 სიცოცხლე.',
+  'is_ready = True': '🤖 is_ready = True : რობოტი მზადაა (True = ჭეშმარიტი).',
+  'x = 50': '🤖 x = 50 : X კოორდინატი არის 50.',
+  'y = 100': '🤖 y = 100 : Y კოორდინატი არის 100.',
+  'total = x + y': '🤖 total = x + y : ჯამი უდრის X-ისა და Y-ის დამატებას.',
+  
+  // ციკლები
+  'for i in range(3):': '🤖 for ... range(3) : კოდი 3-ჯერ გაიმეორება.',
+  'for step in range(5):': '🤖 მოქმედება გაიმეორება 5-ჯერ.',
+  'for i in range(10):': '🤖 მოქმედება გაიმეორება 10-ჯერ.',
+  'while True:': '🤖 while True : უსასრულო ციკლი, არასდროს გაჩერდება!',
+  'while not wall_ahead:': '🤖 სანამ წინ კედელი არ შეგვხვდება, გაიმეორე.',
+  'while player_is_alive:': '🤖 სანამ მოთამაშე ცოცხალია, გაიმეორე ციკლი.',
+  'for coin in coins:': '🤖 ყოველი ნაპოვნი მონეტისთვის შეასრულე მოქმედება.',
+  'while distance > 0:': '🤖 სანამ მანძილი მეტია ნულზე, იმოძრავე.',
+  'pass': '🤖 pass : გამოტოვე, არაფერი გააკეთო.',
+  
+  // პირობები
+  'if path_is_clear:': '🤖 if (თუ) გზა თავისუფალია, გააკეთე ეს.',
+  'if distance < 5:': '🤖 if (თუ) მანძილი 5-ზე ნაკლებია...',
+  'if score >= 100:': '🤖 if (თუ) ქულა მეტია ან ტოლია 100-ზე...',
+  'if not is_game_over:': '🤖 if not (თუ არ) არის თამაში დასრულებული...',
+  'elif object == "enemy":': '🤖 elif (ან თუ) ობიექტი მტერია...',
+  'elif key_pressed == "space":': '🤖 elif (ან თუ) Space ღილაკს დავაჭირეთ...',
+  'if x == 5 and y == 10:': '🤖 if ... and ... : თუ X არის 5 და ამავდროულად Y არის 10.',
+  'else:': '🤖 else (სხვა შემთხვევაში) : თუ ზედა პირობები არ შესრულდა.',
+  'break': '🤖 break : ციკლის (გამეორების) სასწრაფოდ შეწყვეტა!'
+};
+
+const finalExamQuestions = [
+  '🤖 კითხვა 1 (გაშიფვრა): რას იზამს რობოტი? \nstep(5)\nturn("left")\ngrab("key")',
+  '🤖 კითხვა 2 (კოდის გაშიფვრა): რას დაბეჭდავს ეკრანზე ეს კოდი? \nscore = 10\nprint(score + 5)',
+  '🤖 კითხვა 3 (დავალება): როგორ დავწეროთ პითონში ბრძანება, რომ რობოტმა გადადგას 8 ნაბიჯი?',
+  '🤖 კითხვა 4 (ალგორითმის აწყობა): დაწერე პითონის ციკლი, რომელიც 3-ჯერ გაიმეორებს "jump()"-ს.'
+];

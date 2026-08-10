@@ -1,5 +1,134 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
+/* =========================================
+   დესკტოპის ეკრანის სრული ათვისება (100% ზუმისთვის)
+   ========================================= */
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important; 
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background-color: #e3f2fd;
+}
+
+/* მთავარი კონტეინერის გაშლა ეკრანის კიდეებამდე */
+.container {
+  width: 98vw !important;
+  max-width: 1800px !important;
+  height: 98vh !important;
+  max-height: 98vh !important;
+  margin: 0 !important;
+  padding: 1vh 1vw !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+/* კლავიატურისა და ტექსტის ველის მაქსიმალური გაშლა და ვერტიკალური ადაპტაცია */
+.keyboard, #textDisplay, .stats, .action-zone, .app-header, .controls {
+  width: 100% !important;
+  max-width: 100% !important; 
+  box-sizing: border-box !important;
+  margin-bottom: 0 !important;
+}
+
+/* Header & Controls */
+header {
+  margin-bottom: min(1vh, 10px) !important;
+}
+.app-header .logo img {
+  height: min(8vh, 60px) !important;
+}
+header h1 {
+  font-size: min(3vh, 24px) !important;
+}
+.controls select, .controls button {
+  padding: min(1vh, 8px) min(1vw, 12px) !important;
+  font-size: min(2vh, 14px) !important;
+}
+
+/* Stats */
+.stats {
+  margin-bottom: min(1vh, 10px) !important;
+  gap: 1vw !important;
+}
+.stat-box {
+  padding: min(1vh, 10px) !important;
+  font-size: min(1.8vh, 14px) !important;
+}
+.stat-val {
+  font-size: min(2.5vh, 20px) !important;
+  margin-top: min(0.5vh, 4px) !important;
+}
+
+/* Action Zone & Instruction */
+.action-zone {
+  height: min(12vh, 100px) !important;
+  margin: min(1vh, 10px) 0 !important;
+}
+.giga-container {
+  height: min(12vh, 100px) !important;
+}
+.giga-image {
+  height: min(10vh, 80px) !important;
+  max-height: min(10vh, 80px) !important;
+}
+.instruction-box {
+  padding: min(1vh, 15px) !important;
+  font-size: min(2vh, 16px) !important;
+}
+
+/* Text Display & Free Typing */
+#textDisplay {
+  min-height: min(8vh, 50px) !important;
+  height: auto !important;
+  flex-shrink: 0 !important;
+  font-size: min(3.5vh, 24px) !important;
+  padding: min(1vh, 10px) !important;
+  margin-bottom: min(1vh, 10px) !important;
+}
+.free-typing {
+  margin-bottom: min(1vh, 10px) !important;
+  gap: min(1vh, 10px) !important;
+}
+#freeTypingArea {
+  height: min(8vh, 50px) !important;
+  padding: min(1vh, 10px) !important;
+}
+
+/* ეკრანზე რომ ჩაეტიოს, კლავიატურის ღილაკები ხდება დინამიური (vh-ზე დამოკიდებული) */
+.keyboard {
+  flex-grow: 1;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  padding: min(1.5vh, 15px) !important;
+  gap: min(1vh, 6px) !important;
+}
+
+.row, .keyboard-row {
+  gap: min(0.5vw, 6px) !important;
+}
+
+.key {
+  height: min(6.5vh, 50px) !important;
+  font-size: min(2.2vh, 16px) !important;
+  padding: 0 !important;
+}
+
+.key .main-char {
+  font-size: min(2.5vh, 20px) !important;
+}
+.key .shift-char, .key .en-char {
+  font-size: min(1.5vh, 12px) !important;
+}
+
 :root {
   --lp: #FF595E;
   --lr: #FFCA3A;
@@ -117,12 +246,12 @@ header h1 {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
   background: white;
-  padding: 20px;
+  padding: 20px 120px;
   border-radius: 15px;
   margin-bottom: 30px;
   line-height: 1.5;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  text-align: left;
+  text-align: center;
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -137,8 +266,8 @@ header h1 {
 
 #freeTypingArea {
   width: 100%;
-  height: 150px;
-  padding: 15px;
+  height: 60px;
+  padding: 10px 15px;
   border-radius: 15px;
   border: 2px solid #1982C4;
   font-size: 20px;
@@ -306,18 +435,7 @@ body.level-5 .text-display .char:not(.correct):not(.wrong) {
   color: #888;
 }
 
-/* Language specifics */
-body[data-lang="en"] .key .main-char {
-  color: #888;
-  font-size: 0.9em;
-}
-body[data-lang="en"] .key .en-char {
-  color: #333;
-  font-size: 1.2em;
-}
-body[data-lang="en"] .key .shift-char {
-  display: none;
-}
+
 
 .keyboard-area {
   display: flex;
@@ -491,10 +609,10 @@ body[data-lang="en"] .key .shift-char {
 }
 
 .giga-container {
-  width: 200px;
-  height: 240px;
+  width: 140px;
+  height: 120px;
   position: absolute;
-  top: 10px;
+  top: 0px;
   z-index: 10;
   display: flex;
   justify-content: center;
@@ -666,6 +784,50 @@ body.level-4 .giga-image {
 .app-footer p {
   margin: 0;
   text-shadow: 1px 1px 2px rgba(255,255,255,0.5); /* Slight shadow to ensure readability on background */
+}
+
+/* ეკრანის სრული კონტროლი: ვკრძალავთ ზედმეტ სქროლს */
+html, body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* აუქმებს სქროლს */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* მთავარი კონტეინერის გაშლა სიგანეში და ჩატევა სიმაღლეში */
+.container {
+  width: 96% !important; /* იკავებს ეკრანის სიგანის 96%-ს */
+  max-width: 1400px !important; /* უშვებს ბევრად განიერზე, ვიდრე იყო */
+  max-height: 96vh !important; /* არ ცდება ეკრანის სიმაღლეს */
+  padding: 2vh 2vw !important;
+  margin: 0 auto !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* კლავიატურის პროპორციული გაშლა */
+.keyboard {
+  width: 100% !important;
+  max-width: 1100px !important; /* იზრდება სიგანეში, რომ ღილაკები განიერი იყოს */
+  margin: 0 auto 1vh auto !important;
+}
+
+/* დაშორებების მორგება ეკრანის სიმაღლეზე (vh) */
+.header-controls, .controls, .stats, .action-zone {
+  margin-bottom: 1.5vh !important;
+}
+
+/* ასაკრეფი ტექსტის ველი */
+#textDisplay {
+  width: 100% !important;
+  margin-bottom: 1.5vh !important;
+  box-sizing: border-box;
 }
 
 /* Responsive & Mobile Layout */
@@ -880,13 +1042,67 @@ body.level-4 .giga-image {
 
 .app-header {
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 15px;
+  background-color: transparent;
+  flex-shrink: 0;
+}
+
+.header-top {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  flex-wrap: wrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-buttons button {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.controls-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 6px 20px;
+  border-radius: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+}
+
+.styled-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.task-badge {
+  background: #2196f3;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 13px;
 }
 
 .app-header .logo {
@@ -927,25 +1143,56 @@ body.level-4 .giga-image {
   background-color: #f9f9f9;
 }
 
+body {
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
 body.hacker-mode {
-  background-color: #1a1a1a;
+  background-color: #121212 !important;
 }
 body.hacker-mode h1, 
 body.hacker-mode .stats div {
-  color: #4caf50;
+  color: #4caf50 !important;
 }
 body.hacker-mode #textDisplay {
-  background-color: #000000;
-  color: #00ff00;
-  font-family: 'Courier New', Courier, monospace;
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+  background-color: #000000 !important;
+  color: #00ff00 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  border: 2px solid #00ff00 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3) !important;
 }
 body.hacker-mode .instruction-box {
-  background-color: #2d2d2d;
-  color: #00ff00;
-  border: 1px solid #4caf50;
+  background-color: #2d2d2d !important;
+  color: #00ff00 !important;
+  border: 1px solid #4caf50 !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  margin-bottom: 2px !important;
 }
+body.hacker-mode .keyboard {
+  background-color: #eef8fe !important;
+}
+body.hacker-mode {
+  overflow-y: auto !important;
+}
+body.hacker-mode .container {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 98vh !important;
+}
+body.hacker-mode #freeTypingArea {
+  height: 50px !important;
+  font-size: 18px !important;
+}
+body.hacker-mode #textDisplay {
+  font-size: min(2.5vh, 16px) !important;
+  margin-bottom: 2px !important;
+  padding: 4px !important;
+}
+body.hacker-mode .free-typing {
+  margin-bottom: 5px !important;
+}
+
 
 /* =========================================
    მობილური ვერსიის სტილები (სმარტფონები 768px-მდე)
@@ -1137,4 +1384,48 @@ body.hacker-mode .instruction-box {
     min-width: 150px !important;
     padding: 6px 0 !important;
   }
+}
+
+/* Hacker Mode Styles */
+body {
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+body.hacker-mode {
+  background-color: #121212 !important;
+}
+body.hacker-mode h1, 
+body.hacker-mode .stats div {
+  color: #4caf50 !important;
+}
+body.hacker-mode #textDisplay {
+  background-color: #000000 !important;
+  color: #00ff00 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  border: 2px solid #00ff00 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3) !important;
+  padding: 4px !important;
+  margin-bottom: 2px !important;
+  font-size: 13px !important;
+}
+body.hacker-mode .instruction-box {
+  background-color: #2d2d2d !important;
+  color: #00ff00 !important;
+  border: 1px solid #4caf50 !important;
+  padding: 4px 6px !important;
+  font-size: 11px !important;
+  margin-bottom: 2px !important;
+  line-height: 1.1 !important;
+}
+body.hacker-mode .keyboard {
+  background-color: #1e1e1e !important;
+}
+body.hacker-mode .key {
+  background-color: #333 !important;
+  color: #4caf50 !important;
+  border-bottom: 2px solid #111 !important;
+}
+body.hacker-mode .key .main-char,
+body.hacker-mode .key .shift-char,
+body.hacker-mode .key .en-char {
+  color: #4caf50 !important;
 }

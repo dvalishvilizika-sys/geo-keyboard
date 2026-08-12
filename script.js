@@ -204,29 +204,33 @@ function generateText(lang, levelIndex) {
   let targetArray = [];
   
   if (levelIndex === 0) {
-    targetArray = gameData.letters;
+    targetArray = lang === 'en' ? gameData.enMiddleRow : gameData.kaMiddleRow;
   } else if (levelIndex === 1) {
+    targetArray = lang === 'en' ? gameData.enTopRow : gameData.kaTopRow;
+  } else if (levelIndex === 2) {
+    targetArray = lang === 'en' ? gameData.enBottomRow : gameData.kaBottomRow;
+  } else if (levelIndex === 3) {
     const cat = document.getElementById('categorySelect').value;
     targetArray = gameData.words[cat] || gameData.words.school;
-  } else if (levelIndex === 2) {
-    targetArray = gameData.sentences;
-  } else if (levelIndex === 3) {
-    targetArray = gameData.words.school; // Fallback to words because missing letters logic breaks if string has _
   } else if (levelIndex === 4) {
-    targetArray = gameData.dictation;
+    targetArray = gameData.sentences;
   } else if (levelIndex === 5) {
-    targetArray = gameData.symbols;
+    targetArray = gameData.words.school; 
+  } else if (levelIndex === 6) {
+    targetArray = gameData.dictation;
   } else if (levelIndex === 7) {
-    targetArray = (lang === 'en') ? gameData.pythonText : gameData.robotCommands;
-  } else if (levelIndex === 8) {
-    targetArray = gameData.pythonCommands;
+    targetArray = gameData.symbols;
   } else if (levelIndex === 9) {
-    targetArray = gameData.pythonVariables;
+    targetArray = (lang === 'en') ? gameData.pythonText : gameData.robotCommands;
   } else if (levelIndex === 10) {
-    targetArray = gameData.pythonLoops;
+    targetArray = gameData.pythonCommands;
   } else if (levelIndex === 11) {
-    targetArray = gameData.pythonConditions;
+    targetArray = gameData.pythonVariables;
   } else if (levelIndex === 12) {
+    targetArray = gameData.pythonLoops;
+  } else if (levelIndex === 13) {
+    targetArray = gameData.pythonConditions;
+  } else if (levelIndex === 14) {
     targetArray = finalExamQuestions;
   } else {
     targetArray = gameData.words.school;
@@ -237,35 +241,47 @@ function generateText(lang, levelIndex) {
   let newTask = "";
   let elementsToPick = 1; 
 
-  if (levelIndex === 0) {
-    elementsToPick = 20; // ეტაპი 1 (ასოები)
-  } else if (levelIndex === 1) {
-    elementsToPick = 8; // ეტაპი 2 (სიტყვები)
+  if (levelIndex >= 0 && levelIndex <= 2) {
+    elementsToPick = 15; // 15 ასო თითო დავალებაზე
   } else if (levelIndex === 3) {
-    elementsToPick = 6; // ეტაპი 4 (გამოტოვებული ასოები)
+    elementsToPick = 8; // სიტყვები
   } else if (levelIndex === 5) {
-    elementsToPick = 5; // ეტაპი 6 (სიმბოლოები)
-  } else if (levelIndex === 2) {
-    elementsToPick = 2; // ეტაპი 3 (წინადადებები)
-  } else if (levelIndex >= 7 && levelIndex <= 11) {
-    elementsToPick = 1; // ეტაპი 8 დან 12-მდე (რობოტის მართვა / Python)
+    elementsToPick = 6; // გამოტოვებული ასოები
+  } else if (levelIndex === 7) {
+    elementsToPick = 5; // სიმბოლოები
+  } else if (levelIndex === 4) {
+    elementsToPick = 2; // წინადადებები
+  } else if (levelIndex >= 9 && levelIndex <= 13) {
+    elementsToPick = 1; // კოდირება
   }
 
   if (currentTaskCount === 1) {
     let pool;
-    if (levelIndex === 12) {
-      pool = [...targetArray]; // Only 1 copy for exam, no shuffle needed or optional
+    if (levelIndex === 14) {
+      pool = [...targetArray];
+    } else if (levelIndex >= 0 && levelIndex <= 2) {
+      // ვამრავლებთ ბევრჯერ, რომ 3 სრულყოფილი დავალება გამოვიდეს
+      pool = [...targetArray, ...targetArray, ...targetArray, ...targetArray, ...targetArray];
+      pool = shuffleWithoutConsecutiveDuplicates(pool);
     } else {
       pool = [...targetArray, ...targetArray];
       pool = shuffleWithoutConsecutiveDuplicates(pool);
     }
     
     levelQueue = [];
-    while (pool.length > 0) {
+    
+    // პირველ 3 ეტაპზე ვზღუდავთ ზუსტად 3 დავალებით, სხვაგან არ ვზღუდავთ
+    let taskLimit = (levelIndex >= 0 && levelIndex <= 2) ? 3 : 999;
+    
+    while (pool.length >= elementsToPick && levelQueue.length < taskLimit) {
       let group = pool.splice(0, elementsToPick);
-      if (levelIndex === 12) {
+      if (levelIndex === 14) {
         levelQueue.push(group[0]);
+      } else if (levelIndex >= 0 && levelIndex <= 2) {
+        // პირველ 3 ეტაპზე ასოები ერთიანდება დაშორების (Space) გარეშე
+        levelQueue.push(group.join(""));
       } else {
+        // დანარჩენ ეტაპებზე რჩება სტანდარტული დაშორებები
         levelQueue.push(group.join(" "));
       }
     }
@@ -277,7 +293,7 @@ function generateText(lang, levelIndex) {
     newTask = levelQueue[0] || targetArray[0];
   }
 
-  if (levelIndex === 12) {
+  if (levelIndex === 14) {
     currentExamQuestion = newTask;
     newTask = newTask.q;
   }
@@ -287,7 +303,7 @@ function generateText(lang, levelIndex) {
 }
 
 function updateDynamicInstruction() {
-  if (currentLevel >= 8 && typeof codeExplanations !== 'undefined' && codeExplanations[targetText]) {
+  if (currentLevel >= 10 && typeof codeExplanations !== 'undefined' && codeExplanations[targetText]) {
     const instructionBox = document.getElementById('stageInstruction');
     if (instructionBox) {
       instructionBox.innerHTML = codeExplanations[targetText];
@@ -296,7 +312,7 @@ function updateDynamicInstruction() {
     }
   } else {
     const instructionBox = document.getElementById('stageInstruction');
-    if (instructionBox && instructionBox.dataset.originalText && currentLevel >= 8) {
+    if (instructionBox && instructionBox.dataset.originalText && currentLevel >= 10) {
       instructionBox.innerHTML = instructionBox.dataset.originalText;
     }
   }
@@ -436,7 +452,7 @@ function highlightNextKey() {
   if (gigaTooltip) gigaTooltip.classList.remove('show');
   
   // Disable visual hints for Free Typing(6), Guess(3), and Dictation(4) modes
-  if (currentLevel === 6 || currentLevel === 3 || currentLevel === 4) return;
+  if (currentLevel === 8 || currentLevel === 5 || currentLevel === 6) return;
   
   if (currentIndex >= targetText.length) return;
   const char = targetText[currentIndex];
@@ -486,12 +502,12 @@ function highlightNextKey() {
       const shiftEl = document.getElementById(shiftCode);
       if (shiftEl) {
         shiftEl.classList.add('highlight');
-        if (currentLevel === 5) shiftEl.classList.add('shift-highlight');
+        if (currentLevel === 7) shiftEl.classList.add('shift-highlight');
       }
       const sFinger = document.getElementById(`finger-${shiftFinger}`);
       if (sFinger) sFinger.classList.add('active');
       
-      if (currentLevel === 5 && gigaTooltip) {
+      if (currentLevel === 7 && gigaTooltip) {
         gigaTooltip.classList.add('show');
       }
     }
@@ -520,7 +536,7 @@ function getTypedChar(e, lang) {
 function updateStats() {
   const now = new Date();
   
-  if (startTime && currentLevel !== 6) {
+  if (startTime && currentLevel !== 8) {
     timeElapsed = Math.floor((now - startTime) / 1000);
     document.getElementById('timeLeft').innerText = timeElapsed;
   } else {
@@ -625,45 +641,50 @@ function moveGiga() {
     let instructionText = "";
     switch (currentLevel) {
       case 0:
-        instructionText = "📖 მოათავსე თითები საწყის პოზიციაზე (A S D F და J K L ;) და ივარჯიშე ასოების სწორად აკრეფაში!";
+        instructionText = "📖 ეტაპი 1: მოათავსე თითები შუა რიგზე (A S D F და J K L ;) და ივარჯიშე საწყის პოზიციაზე!";
         break;
       case 1:
-        instructionText = "📖 სიტყვების აკრეფის დროა! ყურადღებით დააკვირდი თითოეულ ასოს და ეცადე, არ შეგეშალოს.";
+        instructionText = "📖 ეტაპი 2: ზედა რიგის დროა! თითები ისევ შუაში გიწყვია და მხოლოდ საჭირო ასოსკენ იწევი მაღლა.";
         break;
       case 2:
-        instructionText = "📖 ახლა მთლიანი წინადადებები უნდა ავკრიფოთ! სიტყვების გამოსაყოფად არ დაგავიწყდეს ჰარის (Space) გამოყენება.";
+        instructionText = "📖 ეტაპი 3: ქვედა რიგი! თითები ჩამოსწიე ქვემოთ და ისევ საწყის პოზიციაზე დააბრუნე.";
         break;
       case 3:
-        instructionText = "📖 დააკვირდი სიტყვას, გამოიცანი რომელი ასო აკლია და ჩასვი ზუსტად!";
+        instructionText = "📖 ეტაპი 4: სიტყვების აკრეფის დროა! ყურადღებით დააკვირდი თითოეულ ასოს.";
         break;
       case 4:
-        instructionText = "📖 ხმოვანი კარნახი: დააჭირე მოსმენის ღილაკს და ყურადღებით აკრიფე ის, რასაც გაიგონებ.";
+        instructionText = "📖 ეტაპი 5: ახლა მთლიანი წინადადებები უნდა ავკრიფოთ! გამოიყენე Space სიტყვების გამოსაყოფად.";
         break;
       case 5:
-        instructionText = "📖 დიდი ასოებისა და სასვენი ნიშნების დასაწერად არ დაგავიწყდეს Shift ღილაკის გამოყენება!";
+        instructionText = "📖 ეტაპი 6: დააკვირდი სიტყვას, გამოიცანი რომელი ასო აკლია და ჩასვი ზუსტად!";
         break;
       case 6:
-        instructionText = "📖 ფინალური პროექტი! თავისუფლად დაწერე ტექსტი, დაიცავი წესები და შეამოწმე შენი ცოდნა.";
+        instructionText = "📖 ეტაპი 7: ხმოვანი კარნახი: დააჭირე მოსმენის ღილაკს და აკრიფე რასაც გაიგონებ.";
         break;
       case 7:
-        instructionText = "💻 ახლა შენ პროგრამისტი ხარ! მოდი, რობოტ გიგას ალგორითმი დავუწეროთ. ყურადღება მიაქციე ორწერტილს (:) და ტირეს (-).";
+        instructionText = "📖 ეტაპი 8: დიდი ასოებისა და სასვენი ნიშნების დასაწერად გამოიყენე Shift ღილაკი!";
         break;
       case 8:
-        instructionText = "🐍 ეტაპი 9: მართე გიგა პითონის ბრძანებებით! არ დაგავიწყდეს ფრჩხილები () ფუნქციის ბოლოს.";
+        instructionText = "📖 ეტაპი 9: ფინალური პროექტი! თავისუფლად დაწერე ტექსტი და შეამოწმე შენი ცოდნა.";
         break;
       case 9:
-        instructionText = "🐍 ეტაპი 10: ვისწავლოთ ცვლადები! = ნიშნით კომპიუტერი იმახსოვრებს რიცხვებსა და სიტყვებს.";
+        instructionText = "💻 ეტაპი 10: შენ პროგრამისტი ხარ! მოდი, რობოტ გიგას ალგორითმი დავუწეროთ.";
         break;
       case 10:
-        instructionText = "🐍 ეტაპი 11: ციკლები! კოდი რომ არ ვწეროთ ბევრჯერ, ვიყენებთ for და while ბრძანებებს. ყურადღება მიაქციე ორწერტილს (:)";
+        instructionText = "🐍 ეტაპი 11: მართე გიგა პითონის ბრძანებებით! არ დაგავიწყდეს ფრჩხილები ().";
         break;
       case 11:
-        instructionText = "🐍 ეტაპი 12: პირობები! if ნიშნავს 'თუ'. ასე რობოტი გადაწყვეტილებებს დამოუკიდებლად იღებს!";
+        instructionText = "🐍 ეტაპი 12: ვისწავლოთ ცვლადები! = ნიშნით კომპიუტერი იმახსოვრებს მონაცემებს.";
+        break;
+      case 12:
+        instructionText = "🐍 ეტაპი 13: ციკლები! კოდი რომ არ ვწეროთ ბევრჯერ, ვიყენებთ for და while-ს.";
+        break;
+      case 13:
+        instructionText = "🐍 ეტაპი 14: პირობები! if ნიშნავს 'თუ'. ასე რობოტი გადაწყვეტილებებს დამოუკიდებლად იღებს!";
         break;
     }
 
-    // Add language indicator
-    if ([4, 5, 8, 9, 10, 11].includes(currentLevel)) {
+    if ([6, 7, 10, 11, 12, 13].includes(currentLevel)) {
       instructionText += "\n\n🇬🇧 გადართე ინგლისურ (EN) კლავიატურაზე.";
     } else {
       instructionText += "\n\n🇬🇪 გადართე ქართულ (GE) კლავიატურაზე.";
@@ -679,14 +700,15 @@ function moveGiga() {
 function startLevel() {
   currentLevel = parseInt(document.getElementById('levelSelect').value);
   
-  if (currentLevel >= 7) {
+  if (currentLevel >= 9) {
     document.body.classList.add('hacker-mode');
   } else {
     document.body.classList.remove('hacker-mode');
   }
   
   moveGiga();
-  if (currentLevel === 4 || currentLevel === 5) {
+  
+  if (currentLevel === 6 || currentLevel === 7) {
     document.getElementById('langSelect').value = 'en';
   }
   currentLang = document.getElementById('langSelect').value;
@@ -694,13 +716,13 @@ function startLevel() {
   
   renderKeyboard();
   
-  if (currentLevel === 1 || currentLevel === 3 || currentLevel === 4) {
+  if (currentLevel === 3 || currentLevel === 5 || currentLevel === 6) {
     document.getElementById('categorySelect').style.display = 'inline-block';
   } else {
     document.getElementById('categorySelect').style.display = 'none';
   }
   
-  if (currentLevel === 4) {
+  if (currentLevel === 6) {
     document.getElementById('dictationBtn').style.display = 'block';
     document.body.classList.add('level-5');
   } else {
@@ -708,14 +730,8 @@ function startLevel() {
     document.body.classList.remove('level-5');
   }
   
-  if (currentLevel >= 7) {
-    document.body.classList.add('hacker-mode');
-  } else {
-    document.body.classList.remove('hacker-mode');
-  }
-  
-  if (currentLevel === 6 || currentLevel === 12) {
-    if (currentLevel === 6) {
+  if (currentLevel === 8 || currentLevel === 14) {
+    if (currentLevel === 8) {
       document.getElementById('taskProgress').style.display = 'none';
       document.getElementById('textDisplay').style.display = 'none';
       document.getElementById('downloadBtn').innerText = 'შენახვა / გადმოწერა';
@@ -735,13 +751,14 @@ function startLevel() {
       el.classList.remove('highlight', 'active');
     });
     document.getElementById('freeTypingArea').focus();
-    if (currentLevel === 6) return;
+    if (currentLevel === 8) return; 
   } else {
     document.getElementById('taskProgress').style.display = 'inline-block';
     document.body.classList.remove('level-4');
     document.getElementById('textDisplay').style.display = 'block';
     document.getElementById('freeTypingContainer').style.display = 'none';
   }
+  
   clearInterval(timerInterval);
   startTime = null;
   isGameStarted = false;
@@ -753,7 +770,7 @@ function startLevel() {
   currentTaskCount = 1;
   document.getElementById('timeLeft').innerText = '0';
 
-  if (currentLevel !== 6) {
+  if (currentLevel !== 8) {
     targetText = generateText(currentLang, currentLevel);
     updateDynamicInstruction();
     maxTasks = levelQueue.length;
@@ -768,7 +785,7 @@ function startLevel() {
   const display = document.getElementById('textDisplay');
   display.innerHTML = '';
   
-  if (currentLevel === 3) {
+  if (currentLevel === 5) {
     const words = targetText.split(' ');
     let cIndex = 0;
     let missingIndices = [];
@@ -800,7 +817,7 @@ function startLevel() {
        document.getElementById(`char-${currentIndex}`).classList.add('current');
        highlightNextKey();
     }
-  } else if (currentLevel !== 3) {
+  } else if (currentLevel !== 5) {
     for (let i = 0; i < targetText.length; i++) {
       if (targetText[i] === '\n') {
         display.appendChild(document.createElement('br'));
@@ -811,7 +828,7 @@ function startLevel() {
       span.id = `char-${i}`;
       span.innerText = targetText[i];
       if (targetText[i] === '\n') {
-        span.style.display = 'none'; // hide the actual \n char span so we still keep indices intact for typing if needed
+        span.style.display = 'none'; 
       }
       display.appendChild(span);
     }
@@ -822,7 +839,7 @@ function startLevel() {
     }
   }
   
-  if (currentLevel === 4) {
+  if (currentLevel === 6) {
     setTimeout(() => {
       document.getElementById('dictationBtn').click();
     }, 500);
@@ -830,7 +847,6 @@ function startLevel() {
 }
 
 document.addEventListener('keydown', (e) => {
-  
   if (e.key === 'Escape') {
     document.getElementById('theoryModal').classList.remove('show');
     return;
@@ -855,22 +871,21 @@ document.addEventListener('keydown', (e) => {
   }
 
   // Dynamic Language Warning Check
-  if (currentLevel !== 6 && currentIndex < targetText.length) {
+  if (currentLevel !== 8 && currentIndex < targetText.length) {
     const expectedChar = targetText[currentIndex];
-    const expectedLang = (currentLevel === 5) ? 'en' : currentLang;
+    const expectedLang = (currentLevel === 7) ? 'en' : currentLang;
     const typedChar = getTypedChar(e, expectedLang);
     
     if (typedChar !== expectedChar) {
       const alternateLang = (currentLang === 'ka') ? 'en' : 'ka';
       const typedCharAlt = getTypedChar(e, alternateLang);
       
-      const isExpectedGeo = /[ა-ჰ]/.test(expectedChar);
-      const isExpectedEng = /[a-zA-Z]/.test(expectedChar);
-      
-      if (typedCharAlt === expectedChar || (isExpectedGeo && /[a-zA-Z]/.test(e.key)) || (isExpectedEng && /[ა-ჰ]/.test(e.key))) {
+      if (typedCharAlt === expectedChar) {
+        const isExpectedEng = /[a-zA-Z]/.test(expectedChar);
         const stageInstruction = document.getElementById('stageInstruction');
         const langName = isExpectedEng ? "ინგლისურ" : "ქართულ";
-        stageInstruction.innerText = `⚠️ ყურადღება: გთხოვ, გადართე ${langName} ენაზე (Alt + Shift ან აპლიკაციის კლავიატურაზე Ctrl+Alt)!`;
+        
+        stageInstruction.innerText = `⚠️ ყურადღება: გთხოვ, გადართე ${langName} ენაზე (აპლიკაციის მენიუდან ან Ctrl+Alt-ით)!`;
         stageInstruction.style.color = "#ff9800";
         if (window.langWarningTimeout) clearTimeout(window.langWarningTimeout);
         window.langWarningTimeout = setTimeout(() => {
@@ -883,7 +898,7 @@ document.addEventListener('keydown', (e) => {
     }
   }
   
-  if (currentLevel === 6 || currentLevel === 12) {
+  if (currentLevel === 8 || currentLevel === 14) {
     const el = document.getElementById(e.code);
     if(el) el.classList.add('active');
     triggerGigaCorrect();
@@ -921,7 +936,7 @@ document.addEventListener('keydown', (e) => {
 
   const expectedChar = targetText[currentIndex];
   // For symbols/numbers level (5) always match in English mode
-  const typedChar = getTypedChar(e, (currentLevel === 5) ? 'en' : currentLang);
+  const typedChar = getTypedChar(e, (currentLevel === 7) ? 'en' : currentLang);
   
   if (typedChar === expectedChar) {
     playSound('correct');
@@ -931,7 +946,7 @@ document.addEventListener('keydown', (e) => {
     span.classList.remove('current', 'wrong');
     span.classList.add('correct');
     
-    if (currentLevel === 3) {
+    if (currentLevel === 5) {
        span.innerText = expectedChar;
     }
     
@@ -984,7 +999,7 @@ document.addEventListener('keydown', (e) => {
         const display = document.getElementById('textDisplay');
         display.innerHTML = '';
         
-        if (currentLevel === 3) {
+        if (currentLevel === 5) {
           const words = targetText.split(' ');
           let cIndex = 0;
           let missingIndices = [];
@@ -1030,7 +1045,7 @@ document.addEventListener('keydown', (e) => {
           }
         }
 
-        if (currentLevel === 4) {
+        if (currentLevel === 6) {
           setTimeout(() => document.getElementById('dictationBtn').click(), 500);
         }
       }
@@ -1119,7 +1134,7 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
   const studentName = document.getElementById('studentName').value || 'Unknown';
   const studentGrade = document.getElementById('studentGrade').value || 'Unknown';
 
-  if (currentLevel === 12) {
+  if (currentLevel === 14) {
     fetch(SCRIPT_URL, {
       method: 'POST', mode: 'no-cors',
       body: JSON.stringify({
@@ -1206,7 +1221,6 @@ document.getElementById('checkProjectBtn').addEventListener('click', () => {
     msgEl.style.color = "#4caf50";
     playSound('correct');
     
-    // Calculate and submit overall average score
     let avgWpm = 0;
     let avgAcc = 0;
     if (userSessionResults.length > 0) {
@@ -1220,9 +1234,24 @@ document.getElementById('checkProjectBtn').addEventListener('click', () => {
       avgAcc = Math.round(sumAcc / userSessionResults.length);
     }
     saveResultToDatabase(avgWpm, avgAcc);
-    
-    // Confetti / Stars
     triggerFireworks();
+    
+    // პროექტის წარმატებით დასრულების შემდეგ ავტომატურად ვრთავთ შემდეგ ეტაპზე
+    setTimeout(() => {
+      document.getElementById('projectModal').classList.remove('show');
+      const levelSelect = document.getElementById('levelSelect');
+      const currentIdx = levelSelect.selectedIndex;
+      const maxIdx = levelSelect.options.length - 1;
+      
+      if (currentIdx < maxIdx) {
+        pendingNextLevel = currentIdx + 1;
+        document.getElementById('levelUpModal').classList.add('show');
+        triggerStars();
+      } else {
+        document.getElementById('allDoneModal').classList.add('show');
+      }
+    }, 2000);
+    
   } else {
     msgEl.innerText = "გთხოვ, დააკმაყოფილო ყველა პირობა!";
     msgEl.style.color = "#f44336";

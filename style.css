@@ -1431,3 +1431,50 @@ body.hacker-mode .key .shift-char,
 body.hacker-mode .key .en-char {
   color: #4caf50 !important;
 }
+
+/* მობილურის Landscape (ჰორიზონტალური) რეჟიმის შესწორება */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  /* კონტეინერს მივცეთ დასქროლვის უფლება, თუ რამე არ დაეტევა */
+  body, .container {
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+
+  /* ვაპატარავებთ ზედა მენიუს და ღილაკებს */
+  .app-header {
+    padding: 5px !important;
+  }
+  .app-header h1 {
+    font-size: 14px !important;
+  }
+  .controls select, .controls button {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    margin-bottom: 2px;
+  }
+
+  /* ვაპატარავებთ სტატისტიკის ველებს */
+  .stats {
+    margin: 5px 0 !important;
+    gap: 5px !important;
+  }
+  .stat-box {
+    padding: 5px !important;
+    font-size: 11px !important;
+  }
+
+  /* ოდნავ ვაპატარავებთ კლავიატურას, რომ კარგად ჩაჯდეს */
+  .keyboard-area {
+    transform: scale(0.85);
+    transform-origin: top center;
+    margin-top: 5px !important;
+  }
+  
+  /* საავტორო უფლებების სწორად განთავსება */
+  .app-footer {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+  }
+}

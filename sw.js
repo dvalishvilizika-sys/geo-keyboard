@@ -1,4 +1,4 @@
-const CACHE_NAME = 'typing-app-v4'; // ყოველი მნიშვნელოვანი ცვლილებისას ეს ციფრი (v4) გაზარდეთ
+const CACHE_NAME = 'typing-app-v5'; // ყოველი მნიშვნელოვანი ცვლილებისას ეს ციფრი (v4) გაზარდეთ
 const urlsToCache = [
   './',
   './index.html',

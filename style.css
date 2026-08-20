@@ -490,6 +490,8 @@ body.level-5 .text-display .char:not(.correct):not(.wrong) {
   max-width: 650px;
   position: relative;
   padding-top: 20px;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .theory-modal h2 {
@@ -1434,13 +1436,17 @@ body.hacker-mode .key .en-char {
 
 /* მობილურის Landscape (ჰორიზონტალური) რეჟიმის შესწორება */
 @media screen and (max-height: 500px) and (orientation: landscape) {
+  body {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    justify-content: flex-start !important;
+  }
+  
   .container {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
     max-width: 100% !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
     height: auto !important;
   }
   

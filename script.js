@@ -1135,16 +1135,17 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
   const studentGrade = document.getElementById('studentGrade').value || 'Unknown';
 
   if (currentLevel === 14) {
+    const payload = {
+      type: 'exam',
+      name: document.getElementById('studentName').value || 'უცნობი',
+      grade: document.getElementById('studentGrade').value || '-',
+      question: currentExamQuestion ? currentExamQuestion.q : targetText,
+      answer: document.getElementById('freeTypingArea').value,
+      correctAnswer: currentExamQuestion ? currentExamQuestion.correct : ''
+    };
     fetch(SCRIPT_URL, {
       method: 'POST', mode: 'no-cors',
-      body: JSON.stringify({
-        type: 'exam',
-        name: studentName,
-        grade: studentGrade,
-        question: targetText,
-        answer: text,
-        correctAnswer: currentExamQuestion ? currentExamQuestion.correct : ''
-      })
+      body: JSON.stringify(payload)
     }).then(() => {
       document.getElementById('freeTypingArea').value = '';
       alert('პასუხი გაგზავნილია! გააგრძელე შემდეგი კითხვით.');
@@ -1177,14 +1178,15 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
       }
     }).catch(e => alert("შეცდომა გაგზავნისას."));
   } else {
+    const payload = {
+      type: 'project',
+      name: document.getElementById('studentName').value || 'უცნობი',
+      grade: document.getElementById('studentGrade').value || '-',
+      projectText: document.getElementById('freeTypingArea').value
+    };
     fetch(SCRIPT_URL, {
       method: 'POST', mode: 'no-cors',
-      body: JSON.stringify({
-        type: 'project',
-        name: studentName,
-        grade: studentGrade,
-        projectText: text
-      })
+      body: JSON.stringify(payload)
     }).then(() => alert('პროექტი გაიგზავნა მასწავლებელთან!')).catch(e => alert("შეცდომა გაგზავნისას."));
   }
 });
@@ -1292,18 +1294,20 @@ if (startAppBtn) {
 }
 
 function saveResultToDatabase(finalWpm, finalAccuracy) {
-    if (!studentName || !studentGrade) return;
+    const payload = {
+        type: 'stats',
+        name: document.getElementById('studentName').value || 'უცნობი',
+        grade: document.getElementById('studentGrade').value || '-',
+        wpm: Number(document.getElementById('wpm').innerText) || 0,
+        accuracy: Number(document.getElementById('accuracy').innerText) || 0,
+        date: new Date().toLocaleDateString('ka-GE')
+    };
+
     fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            name: studentName,
-            grade: studentGrade,
-            wpm: finalWpm,
-            accuracy: finalAccuracy,
-            date: new Date().toLocaleDateString()
-        })
+        body: JSON.stringify(payload)
     }).then(() => console.log("მონაცემები გაიგზავნა!"))
       .catch(err => console.error("შეცდომა:", err));
 }
